@@ -1,0 +1,19 @@
+{% extends "base.html" %}
+
+{% block title %}Cancellazione Iniziativa{% endblock %}
+
+{% block header %}Cancellazione Iniziativa{% endblock %}
+
+{% block body_block %}
+
+   <form method="post" class="form">
+        {% csrf_token %}
+        <strong>{{ object }}</strong>
+        <br/><br/>
+        ATTENZIONE - Questa iniziativa verrà eliminata !
+        <br/><br>
+
+        <input class="btn btn-default" type="button" onclick="window.location = '{% url 'iniziative:index' %}'" value="Annulla">
+        <input class="btn btn-danger" type="submit" value="Conferma" />
+    </form>
+{% endblock %}

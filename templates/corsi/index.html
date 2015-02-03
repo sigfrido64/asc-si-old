@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>Rango</title>
+    </head>
+
+    <body>
+        <h1>Rango says...hello world!</h1>
+        <a href="/corsi/add_iniziativa/">Aggiungi Iniziativa</a><br />
+
+        {% if Iniziative %}
+            <h1>Iniziative</h1>
+            <ul>
+                {% for iniziativa in Iniziative %}
+                <li>{{ iniziativa.iniziativa }}</li>
+                {% endfor %}
+            </ul>
+        {% else %}
+            <strong>There are no categories present.</strong>
+        {% endif %}
+
+        <h1>Ed infine ! Rango says...</h1>
+        hello world! <strong>{{ boldmessage }}</strong><br />
+        <a href="/rango/about/">About</a>
+    </body>
+</html>

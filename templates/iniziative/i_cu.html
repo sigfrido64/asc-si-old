@@ -1,0 +1,16 @@
+{% extends "base.html" %}
+
+{% block title %}Iniziativa{% endblock %}
+{% block header %}Iniziativa{% endblock %}
+
+{% block body_block %}
+    <form action="" method="post" class="form"> {% csrf_token %}
+    {{ form.as_p }}
+
+    <input class="btn btn-default" type="submit" value="Salva" />
+    <input class="btn btn-default" type="button" onclick="window.location = '{% url 'iniziative:index' %}'" value="Annulla">
+    </form>
+{% endblock %}
+
+
+{% block side_block %}:){% endblock %}

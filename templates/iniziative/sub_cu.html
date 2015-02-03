@@ -1,0 +1,26 @@
+{% extends "base.html" %}
+
+{% block title %}SottoIniziativa{% endblock %}
+{% block header %}Creazione Sottoiniziativa di : <strong>{{ iniziativa.nome }}</strong>{% endblock %}
+
+{% block body_block %}
+    <form action="" method="post" class="form-group"> {% csrf_token %}
+
+    {{ form.as_p }}
+
+    {% if form %}
+
+    {% else %}
+        <p>No polls are available.</p>
+    {% endif %}
+
+
+    <input class="btn btn-default" type="submit" value="Salva" />
+    <input class="btn btn-default" type="button" onclick="window.location = '{% url 'iniziative:detail' iniziativa.pk %}'" value="Annulla">
+    </form>
+
+
+{% endblock %}
+
+
+{% block side_block %}:){% endblock %}

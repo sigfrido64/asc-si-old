@@ -1,0 +1,26 @@
+{% extends "base.html" %}
+
+{% block title %}Raggruppamento{% endblock %}
+{% block header %}Creazione Raggruppamento di : <strong>{{ sottoiniziativa.nome }}</strong>{% endblock %}
+
+{% block body_block %}
+    <form action="" method="post" class="form-group"> {% csrf_token %}
+
+    {{ form.as_p }}
+
+    {% if form %}
+
+    {% else %}
+        <p>No polls are available.</p>
+    {% endif %}
+
+
+    <input class="btn btn-default" type="submit" value="Salva" />
+    <input class="btn btn-default" type="button" onclick="window.location = '{% url 'iniziative:sub_detail' sottoiniziativa.pk %}'" value="Annulla">
+    </form>
+
+
+{% endblock %}
+
+
+{% block side_block %}:){% endblock %}

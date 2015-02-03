@@ -1,0 +1,45 @@
+{% extends 'base.html' %}
+
+{% load staticfiles %}
+
+{% block title %}Lista Iniziative{% endblock %}
+{% block header %}Lista Iniziative{% endblock %}
+
+{% block body_block %}
+    {% if lista_iniziative %}
+        <div class="row col-md-8">
+            <table class="table table-bordered">
+                <thead>
+                    <tr>
+                        <th>Nome</th>
+                        <th>Descrizione</th>
+                        <th>Azione</th>
+                    </tr>
+                </thead>
+
+                <tbody>
+                {% for iniziativa in lista_iniziative %}
+                    <tr>
+                        <td><li><a class="sphinxsidebar" href="{% url 'iniziative:detail' iniziativa.pk %}">{{ iniziativa.nome }}</a></li></td>
+                        <td>{{ iniziativa.descrizione }}</td>
+                        <td>
+                            <a class="glyphicon glyphicon-remove" href="{% url 'iniziative:delete' iniziativa.pk %}"></a>
+                            <a class="glyphicon glyphicon-edit" href="{% url 'iniziative:edit' iniziativa.pk %}"></a>
+                        </td>
+                    </tr>
+                {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    {% else %}
+        <div class="row col-md-8">
+            Nessuna Presente !
+        </div>
+    {% endif %}
+
+    <div class="row col-md-8">
+        <a class="btn btn-default" href="{% url 'iniziative:add' %}" role="button">Aggiungi iniziativa</a>
+    </div>
+{% endblock %}
+
+

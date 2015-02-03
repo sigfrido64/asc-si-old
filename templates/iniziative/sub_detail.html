@@ -1,0 +1,77 @@
+{% extends 'base.html' %}
+
+{% load staticfiles %}
+
+{% block title %}Dettaglio Sotto Iniziativa{% endblock %}
+{% block header %}Dettaglio Sotto Iniziativa{% endblock %}
+
+{% block body_block %}
+
+ <div class="row col-md-4">
+    <div>
+        <p class="lead"><ins>Sotto Iniziativa : {{ sottoiniziativa.nome }}</ins></p>
+        <p>
+            Descrizione: {{ sottoiniziativa.descrizione }}<br>
+            In uso : {{ sottoiniziativa.in_uso|yesno:"Si,No" }}
+        </p>
+        <p class="small">
+            Data Aggiornamento: {{ sottoiniziativa.data_aggiornamento|date }}<br>
+            Data Creazione: {{ sottoiniziativa.data_creazione|date }}
+        </p>
+    </div>
+ </div>
+ <div class="row col-md-4 col-md-offset-1">
+    <div>
+        <p class="lead"><ins>Iniziativa Padre : {{ iniziativa.nome }}</ins></p>
+        <p>
+            Descrizione: {{ iniziativa.descrizione }}<br>
+            CUP/CIG: {{ iniziativa.cup_cig }}<br>
+            In uso : {{ iniziativa.in_uso|yesno:"Si,No" }}
+        </p>
+        <p class="small">
+            Data Aggiornamento: {{ iniziativa.data_aggiornamento|date }}<br>
+            Data Creazione: {{ iniziativa.data_creazione|date }}
+        </p>
+    </div>
+ </div>
+ <div class="row col-md-4">
+    <div>
+        <br>
+        <input class="btn btn-default" type="button" onclick="window.location = '{% url 'iniziative:index' %}'" value="Indietro">
+        <input class="btn btn-default" type="button" onclick="window.location = '{% url 'iniziative:edit' iniziativa.pk %}'" value="Edit">
+        <br><br>
+    </div>
+ </div>
+
+ <div class="row col-md-10">
+     <h4>Raggruppamenti Correlati</h4>
+
+     <div class="text-center">
+        <input class="btn btn-info" type="button" onclick="window.location = '{% url 'iniziative:grp_add' sottoiniziativa.pk %}'"
+            value="Aggiungi Raggruppamento"><br><br>
+     </div>
+
+    {% if raggruppamenti %}
+        <table class="table table-bordered">
+            <tr>
+                <th>Nome</th>
+                <th>Descrizione</th>
+                <th>Azione</th>
+            </tr>
+            {% for raggruppamento in raggruppamenti %}
+              <tr>
+                <td><li><a href="{% url 'iniziative:grp_detail' raggruppamento.pk %}">{{ raggruppamento.nome }}</a></li></td>
+                <td>{{ raggruppamento.descrizione }}</td>
+                <td>
+                    <a class="glyphicon glyphicon-remove" href="{% url 'iniziative:grp_delete' raggruppamento.pk %}"></a>
+                    <a class="glyphicon glyphicon-edit" href="{% url 'iniziative:grp_edit' raggruppamento.pk %}"></a>
+                </td>
+              </tr>
+            {% endfor %}
+        </table>
+    {% else %}
+        <strong><mark>Nessuno Presente !</mark></strong>
+    {% endif %}
+ </div>
+
+{% endblock %}
