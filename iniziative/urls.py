@@ -2,20 +2,21 @@
 __author__ = 'Sig'
 from django.conf.urls import patterns, url
 from django.contrib.auth.decorators import login_required
-from iniziative.views import IniziativaAdd, IniziativaEdit, IniziativaDelete, index, detail, sottoiniziativa_detail, \
-    sottoiniziativa_add, sottoiniziativa_edit, SottoIniziativaDelete, gruppo_add, gruppo_edit, GruppoDelete, gruppo_detail
+from iniziative.views import IniziativaAdd, IniziativaEdit, index, detail, sottoiniziativa_detail, \
+    sottoiniziativa_add, sottoiniziativa_edit, gruppo_add, gruppo_edit, GruppoDelete, gruppo_detail, \
+    iniziativa_delete, sottoiniziativa_delete
 
 
 urlpatterns = patterns('',
                        url(r'^$', index, name='index'),
                        url(r'^add/$', login_required(IniziativaAdd.as_view()), name='add'),
                        url(r'^edit/(?P<pk>\d+)$', login_required(IniziativaEdit.as_view()), name='edit'),
-                       url(r'^delete/(?P<pk>\d+)$', login_required(IniziativaDelete.as_view()), name='delete'),
+                       url(r'^delete/(?P<pk>\d+)$', iniziativa_delete, name='delete'),
                        url(r'^(?P<pk_iniziativa>\d+)/$', detail, name='detail'),
 
                        url(r'^(?P<pk_iniziativa>\d+)/subadd/$', sottoiniziativa_add, name='sub_add'),
                        url(r'^subedit/(?P<pk>\d+)$', sottoiniziativa_edit, name='sub_edit'),
-                       url(r'^delete_sub/(?P<pk>\d+)$', login_required(SottoIniziativaDelete.as_view()),
+                       url(r'^delete_sub/(?P<pk>\d+)$', sottoiniziativa_delete,
                            name='sub_delete'),
                        url(r'^sub/(?P<pk_sub>\d+)/$', sottoiniziativa_detail, name='sub_detail'),
 

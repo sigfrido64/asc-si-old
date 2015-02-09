@@ -15,10 +15,10 @@ class Migration(migrations.Migration):
         migrations.CreateModel(
             name='Docente',
             fields=[
-                ('id', models.AutoField(primary_key=True, verbose_name='ID', auto_created=True, serialize=False)),
+                ('id', models.AutoField(verbose_name='ID', primary_key=True, serialize=False, auto_created=True)),
                 ('in_essere', models.BooleanField(default=False)),
-                ('cognome', models.CharField(max_length=50, validators=[django.core.validators.MinLengthValidator(2)])),
-                ('nome', models.CharField(max_length=100, validators=[django.core.validators.MinLengthValidator(3)])),
+                ('cognome', models.CharField(validators=[django.core.validators.MinLengthValidator(2)], max_length=50)),
+                ('nome', models.CharField(validators=[django.core.validators.MinLengthValidator(3)], max_length=100)),
                 ('codice_fiscale', models.CharField(max_length=16)),
                 ('parametro', models.FloatField()),
                 ('tipologia_fornitore', models.CharField(max_length=10)),
@@ -31,7 +31,7 @@ class Migration(migrations.Migration):
         migrations.CreateModel(
             name='IncaricoDocenza',
             fields=[
-                ('id', models.AutoField(primary_key=True, verbose_name='ID', auto_created=True, serialize=False)),
+                ('id', models.AutoField(verbose_name='ID', primary_key=True, serialize=False, auto_created=True)),
                 ('data_inizio', models.DateField(auto_created=True)),
                 ('data_proposta', models.DateField(auto_created=True)),
                 ('proposta_numero', models.CharField(max_length=5)),
@@ -40,7 +40,7 @@ class Migration(migrations.Migration):
                 ('ore_previste', models.IntegerField()),
                 ('parametro', models.FloatField()),
                 ('extra_compenso', models.FloatField(blank=True, default=0)),
-                ('extra_compenso_motivazione', models.CharField(default='', blank=True, max_length=200)),
+                ('extra_compenso_motivazione', models.CharField(blank=True, max_length=200, default='')),
                 ('compenso_totale_previsto', models.FloatField()),
                 ('tipologia_fornitore', models.CharField(max_length=10)),
                 ('iniziativa', models.CharField(max_length=20)),

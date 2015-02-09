@@ -16,6 +16,7 @@
 from django.http import Http404, HttpResponseRedirect
 from django.contrib.auth.decorators import login_required
 from django.shortcuts import render
+from django.db.models.deletion import ProtectedError
 
 from django.core.urlresolvers import reverse
 from .models import Iniziativa, SottoIniziativa, Raggruppamento
@@ -54,14 +55,31 @@ class IniziativaEdit(UpdateView):
     success_url = '/si/iniziative/'
 
 
-class IniziativaDelete(IniziativaMixin, DeleteView):
+@login_required()
+def iniziativa_delete(request, pk):
     """
-    INIZIATIVA : Cancellazione di un'iniziativa. !! Login required gestito in urls !!
+    INIZIATIVA : Elimina l'iniziativa data se non ha figli.
     """
-    template_name = 'iniziative/i_del.html'
+    # Cerca di recuperare l'iniziativa e se non ci riesce segnala errore.
+    try:
+        iniziativa = Iniziativa.objects.get(pk=pk)
+    except Iniziativa.DoesNotExist:
+        raise Http404("Indice iniziativa inesistente !")
 
-    def get_success_url(self):
-        return reverse('iniziative:index')
+    if iniziativa.sottoiniziativa_set.count() > 0:
+        context_dict = {'elemento': iniziativa,
+                        'correlati': iniziativa.sottoiniziativa_set.all(),
+                        'indietro': reverse('iniziative:index')}
+        return render(request, 'e_delcorr.html', context_dict)
+
+    # Se è un POST vuol dire che ci sono già passato e che ho confermato la cancellazione, quindi eseguo.
+    if request.method == 'POST':
+        iniziativa.delete()
+        return HttpResponseRedirect(reverse('iniziative:index'))
+    else:
+        # Altrimenti visualizzo il form con la domanda se voglio cancellare.
+        context_dict = {'iniziativa': iniziativa}
+        return render(request, 'iniziative/i_del.html', context_dict)
 
 
 @login_required()
@@ -155,14 +173,31 @@ def sottoiniziativa_edit(request, pk):
     return render(request, 'iniziative/sub_cu.html', context_dict)
 
 
-class SottoIniziativaDelete(SubIniziativaMixin, DeleteView):
+@login_required()
+def sottoiniziativa_delete(request, pk):
     """
-    SOTTO-INIZIATIVA : Cancella la sotto iniziativa
+    INIZIATIVA : Elimina l'iniziativa data se non ha figli.
     """
-    template_name = 'iniziative/sub_del.html'
+    # Cerca di recuperare l'iniziativa e se non ci riesce segnala errore.
+    try:
+        sottoiniziativa = SottoIniziativa.objects.get(pk=pk)
+    except SottoIniziativa.DoesNotExist:
+        raise Http404("Indice iniziativa inesistente !")
 
-    def get_success_url(self):
-        return reverse('iniziative:detail', kwargs={'pk_iniziativa': self.object.iniziativa.pk})
+    if sottoiniziativa.raggruppamento_set.count() > 0:
+        context_dict = {'elemento': sottoiniziativa,
+                        'correlati': sottoiniziativa.raggruppamento_set.all(),
+                        'indietro': reverse('iniziative:sub_detail', kwargs={'pk_sub': pk})}
+        return render(request, 'e_delcorr.html', context_dict)
+
+    # Se è un POST vuol dire che ci sono già passato e che ho confermato la cancellazione, quindi eseguo.
+    if request.method == 'POST':
+        sottoiniziativa.delete()
+        return HttpResponseRedirect(reverse('iniziative:sub_detail', kwargs={'pk_sub': pk}))
+    else:
+        # Altrimenti visualizzo il form con la domanda se voglio cancellare.
+        context_dict = {'sottoiniziativa': sottoiniziativa}
+        return render(request, 'iniziative/sub_del.html', context_dict)
 
 
 @login_required()

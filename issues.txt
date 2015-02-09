@@ -1,0 +1,5 @@
+###
+N. 1: Impedire la cancellazione a catena di elementi.
+
+Status : on charge
+

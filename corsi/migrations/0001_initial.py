@@ -15,8 +15,8 @@ class Migration(migrations.Migration):
         migrations.CreateModel(
             name='Corso',
             fields=[
-                ('codice', models.CharField(primary_key=True, max_length=10, serialize=False, validators=[django.core.validators.MinLengthValidator(6)])),
-                ('denominazione', models.CharField(max_length=100, validators=[django.core.validators.MinLengthValidator(5)])),
+                ('codice', models.CharField(validators=[django.core.validators.MinLengthValidator(6)], primary_key=True, serialize=False, max_length=10)),
+                ('denominazione', models.CharField(validators=[django.core.validators.MinLengthValidator(5)], max_length=100)),
                 ('data_inizio', models.DateField()),
                 ('data_fine', models.DateField()),
                 ('durata', models.IntegerField(default=8)),
@@ -24,8 +24,8 @@ class Migration(migrations.Migration):
                 ('raggruppamento', models.ForeignKey(to='iniziative.Raggruppamento')),
             ],
             options={
-                'verbose_name': 'Corso',
                 'verbose_name_plural': 'Corsi',
+                'verbose_name': 'Corso',
             },
             bases=(models.Model,),
         ),

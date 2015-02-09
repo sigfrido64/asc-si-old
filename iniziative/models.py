@@ -29,7 +29,7 @@ class SottoIniziativa(models.Model):
     """
     nome = models.CharField(db_index=True, max_length=80)
     descrizione = models.CharField(max_length=80)
-    iniziativa = models.ForeignKey(Iniziativa)
+    iniziativa = models.ForeignKey(Iniziativa, on_delete=models.PROTECT)
     in_uso = models.BooleanField(db_index=True, default=True)
     data_aggiornamento = models.DateTimeField(auto_now=True)
     data_creazione = models.DateTimeField(auto_now_add=True)
@@ -48,7 +48,7 @@ class Raggruppamento(models.Model):
     """
     nome = models.CharField(db_index=True, max_length=80)
     descrizione = models.CharField(max_length=80)
-    sotto_iniziativa = models.ForeignKey(SottoIniziativa)
+    sotto_iniziativa = models.ForeignKey(SottoIniziativa, on_delete=models.PROTECT)
     in_uso = models.BooleanField(db_index=True, default=True)
     ordine = models.CharField(max_length=10)
     data_aggiornamento = models.DateTimeField(auto_now=True)
