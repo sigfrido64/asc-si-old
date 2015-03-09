@@ -1,7 +1,12 @@
 ###
-N. 2: Inserire la gestione e la firma dei files.
+N. 3: Inserire la firma dei files.
 
-Status : WIP
+Status : TO DO
+
+###
+N. 2: Inserire la gestione dei files.
+
+Status : ok !
 
 ###
 N. 1: Impedire la cancellazione a catena di elementi.
