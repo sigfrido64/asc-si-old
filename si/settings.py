@@ -54,6 +54,7 @@ INSTALLED_APPS = (
     'docenti',
     'corsi',
     'iniziative',
+    'sifilesmanager',
 )
 
 MIDDLEWARE_CLASSES = (
@@ -99,8 +100,8 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/dev/howto/static-files/
 
 STATIC_URL = '/static/'
-
 STATIC_PATH = os.path.join(BASE_DIR, 'static')
+
 
 STATICFILES_DIRS = (
     STATIC_PATH,
@@ -109,5 +110,11 @@ STATICFILES_DIRS = (
 
 #
 # Qui invece salvo i file di cui faccio l'upload.
-MEDIA_ROOT = 'si/media'
-MEDIA_URL = '/media/'
+MEDIA_ROOT = os.path.join(BASE_DIR, 'uploads')
+MEDIA_URL = 'uploads/'
+
+#
+# E qui memorizzo i dati del mio filesystem.
+SIFILEDATA_ROOT = os.path.join(BASE_DIR, 'data')
+SIFILEDATA_URL = '/data/'
+

@@ -16,11 +16,9 @@
 from django.http import Http404, HttpResponseRedirect
 from django.contrib.auth.decorators import login_required
 from django.shortcuts import render
-from django.db.models.deletion import ProtectedError
-
 from django.core.urlresolvers import reverse
 from .models import Iniziativa, SottoIniziativa, Raggruppamento
-from .forms import SottoIniziativaForm, IniziativaMixin, SubIniziativaMixin, GruppoForm, GruppoMixin
+from .forms import SottoIniziativaForm, GruppoForm, GruppoMixin
 from django.views.generic import CreateView, UpdateView, DeleteView
 
 
