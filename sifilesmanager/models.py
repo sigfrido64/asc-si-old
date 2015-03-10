@@ -38,13 +38,15 @@ class SiFile(models.Model):
     pathurl = models.CharField(max_length=2)
     url = models.CharField(max_length=38)
     filename = models.FileField(upload_to=upload_to_sha1, storage=fs)  # TODO che faccio con le collisioni ?
-    inode = models.ForeignKey(INode, on_delete=models.PROTECT, null=True, blank=False, default=None)  # TODO Dimensione del file
+    inode = models.ForeignKey(INode, on_delete=models.PROTECT, null=True, blank=False, default=None)
+    size = models.PositiveIntegerField(default=0)
     data_aggiornamento = models.DateTimeField(auto_now=True)
     data_creazione = models.DateTimeField(auto_now_add=True)
 
     def save(self, *args, **kwargs):
         # Salva il nome del file in nome.
         self.nome = self.filename
+        self.size = self.filename.size
 
         # Salva l'hash sha1 del file in sha1_hash
         h = hashlib.sha1()
