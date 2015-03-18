@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 __author__ = 'Sig'
 from django.forms import ModelForm
 from .models import SiFile, INode

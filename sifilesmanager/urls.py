@@ -1,4 +1,4 @@
-# coding=utf-8
+# -*- coding: utf-8 -*-
 __author__ = 'Sig'
 from django.conf.urls import patterns, url
 from sifilesmanager.views import index, fileupload, folder_add, folder_edit, folder_delete, file_delete

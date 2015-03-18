@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 # Create your views here.
 from .forms import SiFileForm, INodeForm
 from .models import SiFile
