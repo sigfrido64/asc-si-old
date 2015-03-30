@@ -1,14 +1,26 @@
 {% extends 'base.html' %}
 
-{% load staticfiles %}
-
 {% block title %}Dettaglio Raggruppamento{% endblock %}
 {% block header %}Dettaglio Raggruppamento{% endblock %}
 
 {% block body_block %}
 
- <div class="row col-md-4">
-    <div>
+<div class="row">
+    <div class="col-md-4 bg-success">
+        <p class="lead"><ins>Raggruppamento : {{ gruppo.nome }}</ins></p>
+        <p>
+            Descrizione: {{ gruppo.descrizione }}<br>
+            Ordine: {{ gruppo.ordine }}<br>
+            In uso : {{ gruppo.in_uso|yesno:"Si,No" }}
+        </p>
+        <p class="small">
+            Data Aggiornamento: {{ gruppo.data_aggiornamento|date }}<br>
+            Data Creazione: {{ gruppo.data_creazione|date }}
+        </p>
+    </div>
+
+
+    <div class="row col-md-3 col-md-offeset-1">
         <p class="lead"><ins>Sotto Iniziativa Padre : {{ sottoiniziativa.nome }}</ins></p>
         <p>
             Descrizione: {{ sottoiniziativa.descrizione }}<br>
@@ -19,10 +31,8 @@
             Data Creazione: {{ sottoiniziativa.data_creazione|date }}
         </p>
     </div>
- </div>
 
- <div class="row col-md-4 col-md-offset-1">
-    <div>
+    <div class="row col-md-3 col-md-offset-1">
         <p class="lead"><ins>Iniziativa Radice : {{ iniziativa.nome }}</ins></p>
         <p>
             Descrizione: {{ iniziativa.descrizione }}<br>
@@ -34,33 +44,14 @@
             Data Creazione: {{ iniziativa.data_creazione|date }}
         </p>
     </div>
- </div>
-
- <div class="row">
-     <div class="col-md-4">
-        <div>
-            <p class="lead"><ins>Raggruppamento : {{ gruppo.nome }}</ins></p>
-            <p>
-                Descrizione: {{ gruppo.descrizione }}<br>
-                Ordine: {{ gruppo.ordine }}<br>
-                In uso : {{ gruppo.in_uso|yesno:"Si,No" }}
-            </p>
-            <p class="small">
-                Data Aggiornamento: {{ gruppo.data_aggiornamento|date }}<br>
-                Data Creazione: {{ gruppo.data_creazione|date }}
-            </p>
-        </div>
-     </div>
- </div>
+</div>
 
 
- <div class="row col-md-4">
-    <div>
+<div class="row col-md-4">
         <br>
-        <input class="btn btn-default" type="button" onclick="window.location = '{% url 'iniziative:index' %}'" value="Indietro">
+        <input class="btn btn-default" type="button" onclick="window.location = '{% url 'iniziative:sub_detail' sottoiniziativa.pk %}'" value="Indietro">
         <input class="btn btn-default" type="button" onclick="window.location = '{% url 'iniziative:grp_edit' gruppo.pk %}'" value="Edit">
         <br><br>
-    </div>
- </div>
+</div>
 
 {% endblock %}

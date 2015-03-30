@@ -1,14 +1,16 @@
 {% extends 'base.html' %}
 
-{% load staticfiles %}
+{% load si_templatetags %}
 
 {% block title %}Dettaglio Iniziativa{% endblock %}
 {% block header %}Dettaglio Iniziativa{% endblock %}
 
 {% block body_block %}
 
- <div class="row col-md-8">
-    <div>
+{% si_dc_dialog %}
+
+ <div class="row col-md-11">
+    <div class="alert alert-success" role="alert">
         <p class="lead"><ins>Iniziativa: {{ iniziativa.nome }}</ins></p>
         <p>
             Descrizione: {{ iniziativa.descrizione }}<br>
@@ -27,17 +29,15 @@
         <input class="btn btn-default" type="button" onclick="window.location = '{% url 'iniziative:edit' iniziativa.pk %}'" value="Edit">
         <br><br>
     </div>
+ </div>
 
- <div class="row col-md-8">
-     <h4>Sottoiniziative Correlate</h4>
-
-     <div class="text-center">
-        <input class="btn btn-info" type="button" onclick="window.location = '{% url 'iniziative:sub_add' iniziativa.pk %}'"
-            value="Aggiungi Sottoiniziativa"><br><br>
+ <div class="row col-md-11">
+     <div class="alert alert-success text-center" role="alert">
+        <h5><strong>Sottoiniziative Correlate</strong></h5>
      </div>
 
-    {% if sottoiniziative %}
-        <table class="table table-bordered">
+     {% if sottoiniziative %}
+        <table class="table table-bordered table-hover">
             <tr>
                 <th>Nome</th>
                 <th>Descrizione</th>
@@ -48,15 +48,33 @@
                 <td><li><a href="{% url 'iniziative:sub_detail' sotto_iniziativa.pk %}">{{ sotto_iniziativa.nome }}</a></li></td>
                 <td>{{ sotto_iniziativa.descrizione }}</td>
                 <td>
+                    <a titolo="Cancellazione Sotto-Iniziativa" item="{{ sotto_iniziativa.nome }}"
+                       link="{% url 'iniziative:sub_delete' sotto_iniziativa.pk %}"
+                       class="remove_link glyphicon glyphicon-remove" href="{% url 'index' %}">
+                    </a>
+                    <a class="glyphicon glyphicon-edit" href="{% url 'iniziative:sub_edit' sotto_iniziativa.pk %}"></a>
+                </td>
+
+                {% comment %}
+                <td>
                     <a class="glyphicon glyphicon-remove" href="{% url 'iniziative:sub_delete' sotto_iniziativa.pk %}"></a>
                     <a class="glyphicon glyphicon-edit" href="{% url 'iniziative:sub_edit' sotto_iniziativa.pk %}"></a>
                 </td>
+                {% endcomment %}
               </tr>
             {% endfor %}
         </table>
     {% else %}
-        <strong><mark>Nessuna Presente !</mark></strong>
+        <div class="text-center jumbotron">
+            <strong><mark>Nessuna Presente !</mark></strong>
+        </div>
     {% endif %}
+
+    <div class="text-center">
+        <input class="btn btn-primary" type="button" onclick="window.location = '{% url 'iniziative:sub_add' iniziativa.pk %}'"
+            value="Aggiungi Sottoiniziativa"><br><br>
+    </div>
+
  </div>
 
 {% endblock %}

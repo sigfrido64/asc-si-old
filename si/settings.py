@@ -13,8 +13,14 @@ Utente Amministrativo : admin - radice
 
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 import os
+import sys
+
 BASE_DIR = os.path.dirname(os.path.dirname(__file__))
 
+# Include BOOTSTRAP3_FOLDER in path
+BOOTSTRAP3_FOLDER = os.path.abspath(os.path.join(BASE_DIR, '..', 'bootstrap3'))
+if BOOTSTRAP3_FOLDER not in sys.path:
+    sys.path.insert(0, BOOTSTRAP3_FOLDER)
 
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/dev/howto/deployment/checklist/
@@ -55,6 +61,7 @@ INSTALLED_APPS = (
     'corsi',
     'iniziative',
     'sifilesmanager',
+    'bootstrap3',
 )
 
 MIDDLEWARE_CLASSES = (
@@ -118,3 +125,10 @@ MEDIA_URL = 'uploads/'
 SIFILEDATA_ROOT = os.path.join(BASE_DIR, 'data')
 SIFILEDATA_URL = '/data/'
 
+# Settings for django-bootstrap3
+BOOTSTRAP3 = {
+    'set_required': False,
+    'error_css_class': 'bootstrap3-error',
+    'required_css_class': 'bootstrap3-required',
+    'javascript_in_head': True,
+}
