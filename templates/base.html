@@ -75,6 +75,7 @@
             {% if user.is_authenticated %}
               <li><a href="{% url 'iniziative:index' %}">Iniziative</a></li>
               <li><a href="{% url 'fs:index' %}">File System</a></li>
+              <li><a href="{% url 'corsi:index' %}">Gestione Corsi</a></li>
               <li><a href="{% url 'logout' %}?next=/si/">Logout</a></li>
             {% else %}
               <li><a href="{% url 'login' %}">Login</a></li>

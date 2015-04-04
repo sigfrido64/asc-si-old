@@ -56,12 +56,10 @@ INSTALLED_APPS = (
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'localflavor',
-    'orders',
-    'docenti',
-    'corsi',
     'iniziative',
     'sifilesmanager',
     'bootstrap3',
+    'corsi',
 )
 
 MIDDLEWARE_CLASSES = (

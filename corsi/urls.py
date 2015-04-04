@@ -1,8 +1,8 @@
 # coding=utf-8
 __author__ = 'Sig'
 from django.conf.urls import patterns, url
-from corsi import views
+from .views import CorsiListView
 
 
 urlpatterns = patterns('',
-                       url(r'^$', views.index, name='index'),)
+                       url(r'^$', CorsiListView.as_view(), name='index'),)

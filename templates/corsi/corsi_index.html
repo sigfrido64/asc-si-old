@@ -1,0 +1,50 @@
+{% extends 'base.html' %}
+
+{% load si_templatetags %}
+
+{% block title %}Lista Corsi{% endblock %}
+{% block header %}Lista Corsi{% endblock %}
+
+{% block body_block %}
+
+    {% si_dc_dialog %}
+
+    {% if object_list %}
+        <div class="row col-md-11">
+            <table class="table table-bordered table-hover">
+                <thead>
+                    <tr>
+                        <th class="text-center">Codice Edizione</th>
+                        <th class="text-center">Denominazione</th>
+                        <th class="text-center">Data Inizio</th>
+                        <th class="text-center">Data Fine</th>
+                        <th class="text-center">Stato</th>
+                    </tr>
+                </thead>
+
+                <tbody>
+                {% for corso in object_list %}
+                    <tr>
+                        <td>{{ corso.codice_edizione }}</td>
+                        <td>{{ corso.denominazione }}</td>
+                        <td>{{ corso.data_inizio }}</td>
+                        <td>{{ corso.data_fine }}</td>
+                        <td>{{ corso.get_stato_display }}</td>
+                    </tr>
+                {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    {% else %}
+        <div class="row col-md-11 text-center jumbotron">
+            <strong>Nessuno Presente !</strong>
+        </div>
+    {% endif %}
+
+    <script>
+    $('tbody').sortable();
+    $('table').dataTable();
+    </script>
+
+{% endblock %}
+
