@@ -57,6 +57,8 @@ class IniziativaEdit(UpdateView):
 def iniziativa_delete(request, pk):
     """
     INIZIATIVA : Elimina l'iniziativa data se non ha figli.
+
+    Non chiede conferma perchè la richiesta viene fatta a monte, prima di chiamare questa funzione.
     """
     # Cerca di recuperare l'iniziativa e se non ci riesce segnala errore.
     try:
@@ -64,20 +66,16 @@ def iniziativa_delete(request, pk):
     except Iniziativa.DoesNotExist:
         raise Http404("Indice iniziativa inesistente !")
 
+    # Se l'iniziativa ha figli abbandona segnalando l'errore.
     if iniziativa.sottoiniziativa_set.count() > 0:
         context_dict = {'elemento': iniziativa,
                         'correlati': iniziativa.sottoiniziativa_set.all(),
                         'indietro': reverse('iniziative:index')}
         return render(request, 'e_delcorr.html', context_dict)
 
-    # Se è un POST vuol dire che ci sono già passato e che ho confermato la cancellazione, quindi eseguo.
-    if request.method == 'POST':
-        iniziativa.delete()
-        return HttpResponseRedirect(reverse('iniziative:index'))
-    else:
-        # Altrimenti visualizzo il form con la domanda se voglio cancellare.
-        context_dict = {'iniziativa': iniziativa}
-        return render(request, 'iniziative/i_del.html', context_dict)
+    # Altrimenti procede alla cancellazione.
+    iniziativa.delete()
+    return HttpResponseRedirect(reverse('iniziative:index'))
 
 
 @login_required()
@@ -174,28 +172,27 @@ def sottoiniziativa_edit(request, pk):
 @login_required()
 def sottoiniziativa_delete(request, pk):
     """
-    INIZIATIVA : Elimina l'iniziativa data se non ha figli.
+    SOTTO-INIZIATIVA : Elimina la sotto iniziativa data se non ha figli.
+
+    Non chiede conferma perchè la richiesta viene fatta a monte, prima di chiamare questa funzione.
     """
     # Cerca di recuperare l'iniziativa e se non ci riesce segnala errore.
     try:
         sottoiniziativa = SottoIniziativa.objects.get(pk=pk)
     except SottoIniziativa.DoesNotExist:
-        raise Http404("Indice iniziativa inesistente !")
+        raise Http404("Indice sotto-iniziativa inesistente !")
 
+    # Se la sotto-iniziativa ha figli abbandona segnalando errore.
     if sottoiniziativa.raggruppamento_set.count() > 0:
         context_dict = {'elemento': sottoiniziativa,
                         'correlati': sottoiniziativa.raggruppamento_set.all(),
                         'indietro': reverse('iniziative:sub_detail', kwargs={'pk_sub': pk})}
         return render(request, 'e_delcorr.html', context_dict)
 
-    # Se è un POST vuol dire che ci sono già passato e che ho confermato la cancellazione, quindi eseguo.
-    if request.method == 'POST':
-        sottoiniziativa.delete()
-        return HttpResponseRedirect(reverse('iniziative:sub_detail', kwargs={'pk_sub': pk}))
-    else:
-        # Altrimenti visualizzo il form con la domanda se voglio cancellare.
-        context_dict = {'sottoiniziativa': sottoiniziativa}
-        return render(request, 'iniziative/sub_del.html', context_dict)
+    # Altrimenti procede con la cancellazione e torna alla pagina di dettaglio dell'iniziativa padre.
+    iniziativa = sottoiniziativa.iniziativa
+    sottoiniziativa.delete()
+    return HttpResponseRedirect(reverse('iniziative:detail', kwargs={'pk_iniziativa': iniziativa.pk}))
 
 
 @login_required()
@@ -293,14 +290,23 @@ def gruppo_edit(request, pk):
     return render(request, 'iniziative/grp_cu.html', context_dict)
 
 
-class GruppoDelete(GruppoMixin, DeleteView):
+@login_required()
+def gruppo_delete(request, pk):
     """
-    GRUPPO : Cancella il gruppo
-    """
-    template_name = 'iniziative/grp_del.html'
+    GRUPPO : Elimina il raggruppamento.
 
-    def get_success_url(self):
-        return reverse('iniziative:sub_detail', kwargs={'pk_sub': self.object.sotto_iniziativa.pk})
+    Non chiede conferma perchè la richiesta viene fatta a monte, prima di chiamare questa funzione.
+    """
+    # Cerca di recuperare la sotto-iniziativa e se non ci riesce segnala errore.
+    try:
+        raggruppamento = Raggruppamento.objects.get(pk=pk)
+    except Raggruppamento.DoesNotExist:
+        raise Http404("Indice raggruppamento inesistente !")
+
+    # Procede con la cancellazione e torna alla pagina di dettaglio della sotto iniziativa padre.
+    sottoiniziativa = raggruppamento.sotto_iniziativa
+    raggruppamento.delete()
+    return HttpResponseRedirect(reverse('iniziative:sub_detail', kwargs={'pk_sub': sottoiniziativa.pk}))
 
 
 @login_required()

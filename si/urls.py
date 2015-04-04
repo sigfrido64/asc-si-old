@@ -28,6 +28,7 @@ urlpatterns = patterns(
     url(r'^corsi/', include('corsi.urls', namespace="corsi", app_name="corsi")),
     url(r'^si/iniziative/', include('iniziative.urls', namespace="iniziative", app_name="iniziative")),
     url(r'^si/fs/', include('sifilesmanager.urls', namespace="fs", app_name="fs")),
+    url(r'^si/corsi/', include('corsi.urls', namespace="corsi", app_name="corsi")),
     ) + static(settings.SIFILEDATA_URL, document_root=settings.SIFILEDATA_ROOT)
 
 

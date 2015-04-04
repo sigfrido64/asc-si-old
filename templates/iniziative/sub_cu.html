@@ -1,26 +1,25 @@
 {% extends "base.html" %}
+{% load bootstrap3 %}
 
 {% block title %}SottoIniziativa{% endblock %}
-{% block header %}Creazione Sottoiniziativa di : <strong>{{ iniziativa.nome }}</strong>{% endblock %}
+{% block header %}Sottoiniziativa di : <strong>{{ iniziativa.nome }}</strong>{% endblock %}
 
 {% block body_block %}
-    <form action="" method="post" class="form-group"> {% csrf_token %}
+    <form role="form" class="form-horizontal" method="post">
+        {% csrf_token %}
 
-    {{ form.as_p }}
+        {% bootstrap_form form layout="horizontal" %}
 
-    {% if form %}
-
-    {% else %}
-        <p>No polls are available.</p>
-    {% endif %}
-
-
-    <input class="btn btn-default" type="submit" value="Salva" />
-    <input class="btn btn-default" type="button" onclick="window.location = '{% url 'iniziative:detail' iniziativa.pk %}'" value="Annulla">
+        {% buttons size='sm' layout='horizontal' %}
+            <button type="submit" class="btn btn-primary">
+                {% bootstrap_icon "save" %} Ok
+            </button>
+            <button type="reset" class="btn btn-default">
+                Pulisci Campi
+            </button>
+            <input class="btn btn-info" type="button" onclick="window.location = '{% url 'iniziative:detail' iniziativa.pk %}'" value="Indietro">
+        {% endbuttons %}
     </form>
-
-
 {% endblock %}
-
 
 {% block side_block %}:){% endblock %}

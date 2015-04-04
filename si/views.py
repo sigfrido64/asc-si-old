@@ -5,12 +5,15 @@ from django.shortcuts import render
 from django.contrib.auth import authenticate, login, logout
 from django.http import HttpResponseRedirect, HttpResponse
 from django.contrib.auth.decorators import login_required
+from django.contrib import messages
 
 
 def about(request):
     """
     About View
     """
+
+    messages.warning(request, 'Your account expires in three days.')
 
     # Visualizzo il form delle iniziative.
     return render(request, 'about.html')

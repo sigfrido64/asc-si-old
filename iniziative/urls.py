@@ -3,8 +3,8 @@ __author__ = 'Sig'
 from django.conf.urls import patterns, url
 from django.contrib.auth.decorators import login_required
 from iniziative.views import IniziativaAdd, IniziativaEdit, index, detail, sottoiniziativa_detail, \
-    sottoiniziativa_add, sottoiniziativa_edit, gruppo_add, gruppo_edit, GruppoDelete, gruppo_detail, \
-    iniziativa_delete, sottoiniziativa_delete
+    sottoiniziativa_add, sottoiniziativa_edit, gruppo_add, gruppo_edit, gruppo_detail, \
+    iniziativa_delete, sottoiniziativa_delete, gruppo_delete
 
 
 urlpatterns = patterns('',
@@ -16,14 +16,12 @@ urlpatterns = patterns('',
 
                        url(r'^(?P<pk_iniziativa>\d+)/subadd/$', sottoiniziativa_add, name='sub_add'),
                        url(r'^subedit/(?P<pk>\d+)$', sottoiniziativa_edit, name='sub_edit'),
-                       url(r'^delete_sub/(?P<pk>\d+)$', sottoiniziativa_delete,
-                           name='sub_delete'),
+                       url(r'^delete_sub/(?P<pk>\d+)$', sottoiniziativa_delete, name='sub_delete'),
                        url(r'^sub/(?P<pk_sub>\d+)/$', sottoiniziativa_detail, name='sub_detail'),
 
                        url(r'^(?P<pk_sub>\d+)/grpadd/$', gruppo_add, name='grp_add'),
                        url(r'^grpedit/(?P<pk>\d+)$', gruppo_edit, name='grp_edit'),
-                       url(r'^delete_grp/(?P<pk>\d+)$', login_required(GruppoDelete.as_view()),
-                           name='grp_delete'),
+                       url(r'^delete_grp/(?P<pk>\d+)$', gruppo_delete, name='grp_delete'),
                        url(r'^grp/(?P<pk_grp>\d+)/$', gruppo_detail, name='grp_detail'),
                        )
 

@@ -1,16 +1,27 @@
 {% extends "base.html" %}
+{% load bootstrap3 %}
 
 {% block title %}Iniziativa{% endblock %}
 {% block header %}Iniziativa{% endblock %}
 
 {% block body_block %}
-    <form action="" method="post" class="form"> {% csrf_token %}
-    {{ form.as_p }}
 
-    <input class="btn btn-default" type="submit" value="Salva" />
-    <input class="btn btn-default" type="button" onclick="window.location = '{% url 'iniziative:index' %}'" value="Annulla">
+    <form role="form" class="form-horizontal" method="post">
+        {% csrf_token %}
+
+        {% bootstrap_form form layout="horizontal" %}
+
+        {% buttons size='sm' layout='horizontal' %}
+            <button type="submit" class="btn btn-primary">
+                {% bootstrap_icon "save" %} Ok
+            </button>
+            <button type="reset" class="btn btn-default">
+                Pulisci Campi
+            </button>
+            <input class="btn btn-info" type="button" onclick="window.location = '{% url 'iniziative:index' %}'" value="Indietro">
+        {% endbuttons %}
     </form>
-{% endblock %}
 
+{% endblock %}
 
 {% block side_block %}:){% endblock %}

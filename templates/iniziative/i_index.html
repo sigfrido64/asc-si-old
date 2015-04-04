@@ -1,19 +1,22 @@
 {% extends 'base.html' %}
 
-{% load staticfiles %}
+{% load si_templatetags %}
 
 {% block title %}Lista Iniziative{% endblock %}
 {% block header %}Lista Iniziative{% endblock %}
 
 {% block body_block %}
+
+    {% si_dc_dialog %}
+
     {% if lista_iniziative %}
-        <div class="row col-md-8">
-            <table class="table table-bordered">
+        <div class="row col-md-11">
+            <table class="table table-bordered table-hover">
                 <thead>
                     <tr>
-                        <th>Nome</th>
-                        <th>Descrizione</th>
-                        <th>Azione</th>
+                        <th class="text-center">Nome</th>
+                    <th class="text-center">Descrizione</th>
+                        <th class="text-center">Azione</th>
                     </tr>
                 </thead>
 
@@ -23,7 +26,10 @@
                         <td><li><a class="sphinxsidebar" href="{% url 'iniziative:detail' iniziativa.pk %}">{{ iniziativa.nome }}</a></li></td>
                         <td>{{ iniziativa.descrizione }}</td>
                         <td>
-                            <a class="glyphicon glyphicon-remove" href="{% url 'iniziative:delete' iniziativa.pk %}"></a>
+                            <a titolo="Cancellazione Iniziativa" item="{{ iniziativa.nome }}"
+                               link="{% url 'iniziative:delete' iniziativa.pk %}"
+                               class="remove_link glyphicon glyphicon-remove" href="{% url 'index' %}">
+                            </a>
                             <a class="glyphicon glyphicon-edit" href="{% url 'iniziative:edit' iniziativa.pk %}"></a>
                         </td>
                     </tr>
@@ -32,13 +38,13 @@
             </table>
         </div>
     {% else %}
-        <div class="row col-md-8">
-            Nessuna Presente !
+        <div class="row col-md-11 text-center jumbotron">
+            <strong>Nessuna Presente !</strong>
         </div>
     {% endif %}
 
-    <div class="row col-md-8">
-        <a class="btn btn-default" href="{% url 'iniziative:add' %}" role="button">Aggiungi iniziativa</a>
+    <div class="row col-md-11">
+        <a class="btn btn-primary" href="{% url 'iniziative:add' %}" role="button">Aggiungi iniziativa</a>
     </div>
 {% endblock %}
 
