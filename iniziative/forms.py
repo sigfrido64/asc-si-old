@@ -1,35 +1,12 @@
 # coding=utf-8
 __author__ = 'Sig'
 
-from django.forms import ModelForm
-from .models import Iniziativa, SottoIniziativa, Raggruppamento
+from django.forms import ModelForm, Textarea, TextInput
+from .models import SottoIniziativa, Raggruppamento
+from mongoengine import *
 
 
-class IniziativaMixin(object):
-    model = Iniziativa
-
-    def get_context_data(self, **kwargs):
-        kwargs.update({'object_name': 'Iniziative'})
-        return kwargs
-
-
-class SubIniziativaMixin(object):
-    model = SottoIniziativa
-
-    def get_context_data(self, **kwargs):
-        kwargs.update({'object_name': 'Sotto Iniziative'})
-        return kwargs
-
-
-class GruppoMixin(object):
-    model = Raggruppamento
-
-    def get_context_data(self, **kwargs):
-        kwargs.update({'object_name': 'Raggruppamento'})
-        return kwargs
-
-
-class SottoIniziativaForm(ModelForm):
+class SottoIniziativaForm():
     """
     Attenzione che il campo iniziativa che è una chiave esterna non lo metto proprio così il form potrà essere
     validato senza errori.
@@ -38,6 +15,10 @@ class SottoIniziativaForm(ModelForm):
     class Meta:
         model = SottoIniziativa
         fields = ['nome', 'descrizione', 'in_uso']
+        widgets = {
+            'nome': TextInput(attrs={'size': 60}),
+            'descrizione': Textarea(attrs={'cols': 40, 'rows': 2}),
+        }
 
 
 class GruppoForm(ModelForm):
@@ -49,3 +30,8 @@ class GruppoForm(ModelForm):
     class Meta:
         model = Raggruppamento
         fields = ['nome', 'descrizione', 'ordine', 'in_uso']
+        widgets = {
+            'nome': TextInput(attrs={'size': 60}),
+            'descrizione': Textarea(attrs={'cols': 40, 'rows': 2}),
+            'ordine': TextInput(attrs={'size': 60}),
+        }

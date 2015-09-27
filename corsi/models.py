@@ -2,15 +2,48 @@
 """
     Corsi
 """
-
 from django.db import models
 from django.core.validators import MinLengthValidator, ValidationError
+from mongoengine import fields, Document
 
 
-class Corso(models.Model):
+class Corso(Document):
     """
     Definizione dei corsi
     """
+    codice_edizione = fields.StringField(primary_key=True, max_length=10)
+    denominazione = fields.StringField(max_length=150)
+    data_inizio = fields.DateTimeField()
+    data_fine = fields.DateTimeField()
+    durata = fields.IntField(default=8)
+    ordine = fields.IntField()
+    note = fields.StringField(max_length=1000)
+
+    class Meta:
+        verbose_name = "Corso"
+        verbose_name_plural = "Corsi"
+
+    def __str__(self):
+        return self.codice_edizione + ' ' + self.denominazione
+
+    def clean(self):
+        """
+            Validazione del modello nel suo complesso.
+        """
+        # La durata del corso deve essere di almeno un'ora.
+        if self.durata <= 0:
+            raise ValidationError({'durata': 'La durata del corso deve essere positiva.'})
+
+        # La data di inizio deve essere maggiore o uguale a quella di fine.
+        #if self.data_fine < self.data_inizio:
+        #    raise ValidationError({'data_fine': 'La data di fine corso deve essere maggiore o uguale a quella '
+        #                                        'di inizio corso.'})
+        self.codice_edizione = self.codice_edizione.upper()
+
+
+"""
+class CorsoA(models.Model):
+    Definizione dei corsi
     BOZZA = 0
     PIANIFICATO = 10
 
@@ -40,9 +73,7 @@ class Corso(models.Model):
         return self.codice_edizione + ' ' + self.denominazione
 
     def clean(self):
-        """
             Validazione del modello nel suo complesso.
-        """
         # La durata del corso deve essere di almeno un'ora.
         if self.durata <= 0:
             raise ValidationError({'durata': 'La durata del corso deve essere positiva.'})
@@ -52,3 +83,35 @@ class Corso(models.Model):
             raise ValidationError({'data_fine': 'La data di fine corso deve essere maggiore o uguale a quella '
                                                 'di inizio corso.'})
         self.codice_edizione = self.codice_edizione.upper()
+
+
+class TimeSlot(models.Model):
+    Definizione del Time Slot
+    NORMALE = 0
+    RECUPERO = 0
+
+    TIPOLOGIA_CHOICES = (
+        (NORMALE, u'Normale'),
+        (RECUPERO, u'Recupero'),
+    )
+
+    corso = models.ForeignKey(Corso)
+    inizio = models.DateTimeField()
+    fine = models.DateTimeField()
+    durata = models.FloatField()
+    anno = models.IntegerField()
+    doy = models.IntegerField()
+    tipologia = models.IntegerField(choices=TIPOLOGIA_CHOICES, default=NORMALE)
+
+    data_aggiornamento = models.DateTimeField(auto_now=True)
+    data_creazione = models.DateTimeField(auto_now_add=True)
+
+    # Imposta i campi calcolati prima di salvare
+    def save(self, *args, **kwargs):
+        # Salva il nome del file in nome.
+        self.durata = self.fine - self.inizio
+        self.anno = 100
+
+        super(TimeSlot, self).save(*args, **kwargs)
+
+"""

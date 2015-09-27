@@ -1,27 +1,26 @@
 {% extends 'base.html' %}
-
-{% load si_templatetags %}
+{% load staticfiles %}
 
 {% block title %}Lista Corsi{% endblock %}
 {% block header %}Lista Corsi{% endblock %}
 
 {% block body_block %}
 
-    {% si_dc_dialog %}
-
     {% if object_list %}
-        <div class="row col-md-11">
-            <table class="table table-bordered table-hover">
+        <div>
+            <table class="easyui-datagrid" title="Load Data" iconCls="icon-save"
+            sortName="itemid" sortOrder="asc"
+            rownumbers="true" pagination="true" url="/si/corsi/api/get_corsi"
+            method="get">
                 <thead>
                     <tr>
-                        <th class="text-center">Codice Edizione</th>
-                        <th class="text-center">Denominazione</th>
-                        <th class="text-center">Data Inizio</th>
-                        <th class="text-center">Data Fine</th>
-                        <th class="text-center">Stato</th>
+                        <th data-options="field:'codice', sortable:'true'">Codice Edizione</th>
+                        <th data-options="field:'denominazione'">Denominazione</th>
+                        <th data-options="field:'Data Inizio'">Data Inizio</th>
+                        <th data-options="field:'Data Fine'">Data Fine</th>
+                        <th data-options="field:'Stato'">Stato</th>
                     </tr>
                 </thead>
-
                 <tbody>
                 {% for corso in object_list %}
                     <tr>
@@ -36,15 +35,27 @@
             </table>
         </div>
     {% else %}
-        <div class="row col-md-11 text-center jumbotron">
+        <div class="jumbotron">
             <strong>Nessuno Presente !</strong>
         </div>
     {% endif %}
 
-    <script>
-    $('tbody').sortable();
-    $('table').dataTable();
-    </script>
+
+<script>
+  $(function() {
+    $( "#tags" ).autocomplete({
+      source: "/si/corsi/api/get_corsi"
+    });
+  });
+</script>
+
+
+
+<div class="ui-widget">
+  <label for="tags">Tags: </label>
+  <input id="tags">
+</div>
+
 
 {% endblock %}
 

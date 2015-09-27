@@ -15,6 +15,10 @@ Utente Amministrativo : admin - radice
 import os
 import sys
 
+
+# Specifico per MongoEngine
+from mongoengine import connect
+
 BASE_DIR = os.path.dirname(os.path.dirname(__file__))
 
 # Include BOOTSTRAP3_FOLDER in path
@@ -58,8 +62,9 @@ INSTALLED_APPS = (
     'localflavor',
     'iniziative',
     'sifilesmanager',
-    'bootstrap3',
     'corsi',
+    'aziende',
+    'op',
 )
 
 MIDDLEWARE_CLASSES = (
@@ -77,15 +82,33 @@ ROOT_URLCONF = 'si.urls'
 WSGI_APPLICATION = 'si.wsgi.application'
 
 
+
+# Connessione a MongoDB usando MongoEngine
+connect(db='asc')
+
 # Database
 # https://docs.djangoproject.com/en/dev/ref/settings/#databases
-
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.sqlite3',
         'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),
-    }
+    },
 }
+
+"""
+DATABASES = {
+    'default': {
+            'ENGINE': 'django.db.backends.postgresql_psycopg2', # Add 'postgresql_psycopg2', 'mysql', 'sqlite3' or 'oracle'.
+            'NAME': 'assocam',                      # Or path to database file if using sqlite3.
+            # The following settings are not used with sqlite3:
+            'USER': 'postgres',
+            'PASSWORD': 'radice',
+            'HOST': 'localhost',                      # Empty for localhost through domain sockets or           '127.0.0.1' for localhost through TCP.
+            'PORT': '',                      # Set to empty string for default.
+        },
+}
+"""
+
 
 # Internationalization
 # https://docs.djangoproject.com/en/dev/topics/i18n/

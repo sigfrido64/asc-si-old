@@ -1,16 +1,19 @@
 # coding=utf-8
-__author__ = 'Sig'
-
-
-from django import forms
+from django.forms import Textarea, TextInput
 from .models import Corso
+from mongodbforms import DocumentForm
 
 
-class CorsoForm(forms.ModelForm):
-
-    # An inline class to provide additional information on the form.
+class CorsoForm(DocumentForm):
     class Meta:
-        # Provide an association between the ModelForm and a model
         model = Corso
-        fields = ('codice_edizione', 'denominazione', 'data_inizio', 'data_fine', 'durata', 'stato', 'raggruppamento',
-                  'note')
+        fields = ['codice_edizione', 'denominazione', 'durata', 'ordine', 'note']
+
+        widgets = {
+            'codice_edizione': TextInput(attrs={'class': 'easyui-textbox'}),
+            'denominazione': TextInput(attrs={'class': 'easyui-textbox', 'style': 'width:300px'}),
+            'durata': TextInput(attrs={'class': 'easyui-textbox'}),
+            'ordine': TextInput(attrs={'class': 'easyui-textbox'}),
+            'note': Textarea(attrs={'class': 'easyui-textbox', 'data-options': 'multiline:true',
+                                    'style': 'width:300px;height:100px'}),
+        }

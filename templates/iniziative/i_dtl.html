@@ -9,73 +9,63 @@
 
 {% si_dc_dialog %}
 
- <div class="row col-md-11">
-    <div class="alert alert-success" role="alert">
-        <p class="lead"><ins>Iniziativa: {{ iniziativa.nome }}</ins></p>
-        <p>
-            Descrizione: {{ iniziativa.descrizione }}<br>
-            CUP/CIG: {{ iniziativa.cup_cig }}<br>
-            In uso : {{ iniziativa.in_uso|yesno:"Si,No" }}
-        </p>
-        <p class="small">
-            Data Aggiornamento: {{ iniziativa.data_aggiornamento|date }}<br>
-            Data Creazione: {{ iniziativa.data_creazione|date }}
-        </p>
-    </div>
 
-    <div>
-        <br>
-        <input class="btn btn-default" type="button" onclick="window.location = '{% url 'iniziative:index' %}'" value="Indietro">
-        <input class="btn btn-default" type="button" onclick="window.location = '{% url 'iniziative:edit' iniziativa.pk %}'" value="Edit">
-        <br><br>
-    </div>
- </div>
+<p class="thead">Iniziativa: {{ iniziativa.nome }}</p>
 
- <div class="row col-md-11">
-     <div class="alert alert-success text-center" role="alert">
-        <h5><strong>Sottoiniziative Correlate</strong></h5>
-     </div>
+<p>
+    Descrizione: {{ iniziativa.descrizione }}<br>
+    CUP/CIG: {{ iniziativa.cup_cig }}<br>
+    In uso : {{ iniziativa.in_uso|yesno:"Si,No" }}
+</p>
 
-     {% if sottoiniziative %}
-        <table class="table table-bordered table-hover">
+<p>
+    <small>
+        Data Aggiornamento: {{ iniziativa.data_aggiornamento|date }}<br>
+        Data Creazione: {{ iniziativa.data_creazione|date }}
+    </small>
+</p>
+
+<p class="text-center">
+    <a class="easyui-linkbutton" iconCls="icon-back" href="{% url 'iniziative:index' %}">Indietro</a>
+    <a class="easyui-linkbutton" iconCls="icon-edit" href="{% url 'iniziative:edit' iniziativa.pk %}">Modifica</a>
+</p>
+
+
+{% if sottoiniziative %}
+    <table  class="easyui-datagrid" title="Sottoiniziative correlate">
+        <thead>
             <tr>
-                <th>Nome</th>
-                <th>Descrizione</th>
-                <th>Azione</th>
+                <th data-options="field:'Nome'">Nome</th>
+                <th data-options="field:'Descrizione'">Descrizione</th>
+                <th data-options="field:'Azione'">Azione</th>
             </tr>
-            {% for sotto_iniziativa in sottoiniziative %}
-              <tr>
-                <td><li><a href="{% url 'iniziative:sub_detail' sotto_iniziativa.pk %}">{{ sotto_iniziativa.nome }}</a></li></td>
+        </thead>
+        {% for sotto_iniziativa in sottoiniziative %}
+            <tr>
+                <td><a href="{% url 'iniziative:sub_detail' sotto_iniziativa.pk %}">{{ sotto_iniziativa.nome }}</a></td>
                 <td>{{ sotto_iniziativa.descrizione }}</td>
                 <td>
                     <a titolo="Cancellazione Sotto-Iniziativa" item="{{ sotto_iniziativa.nome }}"
                        link="{% url 'iniziative:sub_delete' sotto_iniziativa.pk %}"
-                       class="remove_link glyphicon glyphicon-remove" href="{% url 'index' %}">
+                       class="easyui-linkbutton remove_link" data-options="iconCls:'icon-cancel'" href="{% url 'index' %}">Del
                     </a>
-                    <a class="glyphicon glyphicon-edit" href="{% url 'iniziative:sub_edit' sotto_iniziativa.pk %}"></a>
+                    <a class="easyui-linkbutton" iconCls="icon-edit" href="{% url 'iniziative:sub_edit' sotto_iniziativa.pk %}">Edit</a>
                 </td>
-
-                {% comment %}
-                <td>
-                    <a class="glyphicon glyphicon-remove" href="{% url 'iniziative:sub_delete' sotto_iniziativa.pk %}"></a>
-                    <a class="glyphicon glyphicon-edit" href="{% url 'iniziative:sub_edit' sotto_iniziativa.pk %}"></a>
-                </td>
-                {% endcomment %}
-              </tr>
-            {% endfor %}
-        </table>
-    {% else %}
-        <div class="text-center jumbotron">
-            <strong><mark>Nessuna Presente !</mark></strong>
-        </div>
-    {% endif %}
-
-    <div class="text-center">
-        <input class="btn btn-primary" type="button" onclick="window.location = '{% url 'iniziative:sub_add' iniziativa.pk %}'"
-            value="Aggiungi Sottoiniziativa"><br><br>
+            </tr>
+        {% endfor %}
+    </table>
+{% else %}
+    <div class="si-title">Sottoiniziative correlate</div>
+    <div class="jumbotron">
+        Nessuna Presente !
     </div>
+{% endif %}
 
- </div>
+<div align="center">
+    <p>
+        <a class="easyui-linkbutton" iconCls="icon-add" href="{% url 'iniziative:sub_add' iniziativa.pk %}">Aggiungi Sottoiniziativa</a>
+    </p>
+</div>
 
 {% endblock %}
 

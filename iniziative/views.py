@@ -13,13 +13,32 @@
  Detail
 """
 # from django.shortcuts import render, get_object_or_404
-from django.http import Http404, HttpResponseRedirect
+from django.http import Http404, HttpResponseRedirect, HttpResponse
 from django.contrib.auth.decorators import login_required
 from django.shortcuts import render
 from django.core.urlresolvers import reverse
-from .models import Iniziativa, SottoIniziativa, Raggruppamento
-from .forms import SottoIniziativaForm, GruppoForm, GruppoMixin
-from django.views.generic import CreateView, UpdateView, DeleteView
+from .models import Iniziativa, SottoIniziativa, Raggruppamento, Poll, Choice
+from .forms import SottoIniziativaForm, GruppoForm
+from django.views.generic import CreateView, UpdateView
+import json
+
+from mongoengine import *
+connect('test')
+
+def cacca(request):
+    """
+    poll = Poll.objects(question__contains="What").first()
+    choice = Choice(choice_text="I'm at DjangoCon.fi", votes=23)
+    poll.choices()
+    poll.save()
+    """
+    poll = Poll.objects(question__contains="merda").first()
+    choice = Choice(choice_text="Pippo e pluto", votes=23)
+    poll.choices.append(choice)
+    poll.save()
+    print(poll)
+
+    return HttpResponse(request, "Fatto")
 
 
 # region INIZIATIVE
@@ -42,6 +61,7 @@ class IniziativaAdd(CreateView):
     model = Iniziativa
     template_name = 'iniziative/i_cu.html'
     success_url = '/si/iniziative/'
+    fields = '__all__'
 
 
 class IniziativaEdit(UpdateView):
@@ -51,6 +71,7 @@ class IniziativaEdit(UpdateView):
     template_name = 'iniziative/i_cu.html'
     model = Iniziativa
     success_url = '/si/iniziative/'
+    fields = ['nome', 'descrizione', 'cup_cig', 'in_uso']
 
 
 @login_required()
@@ -130,10 +151,11 @@ def sottoiniziativa_add(request, pk_iniziativa):
         form = SottoIniziativaForm()
 
     # Popola il dizionario per il template.
-    context_dict = {'form': form, 'iniziativa': iniziativa}
+    context_dict = {'form': form, 'iniziativa': iniziativa, 'blocktitle': 'Sotto Iniziativa', 'header':
+                    'Sotto Iniziativa di ' + iniziativa.nome}
 
     # Visualizza il template.
-    return render(request, 'iniziative/sub_cu.html', context_dict)
+    return render(request, 'si_cu_formasp_t1.html', context_dict)
 
 
 @login_required()
@@ -163,10 +185,11 @@ def sottoiniziativa_edit(request, pk):
         form = SottoIniziativaForm(instance=sottoiniziativa)
 
     # Popola il dizionario per il template.
-    context_dict = {'form': form, 'iniziativa': sottoiniziativa.iniziativa}
+    context_dict = {'form': form, 'iniziativa': sottoiniziativa.iniziativa, 'blocktitle': 'Sotto Iniziativa', 'header':
+                    'Sotto Iniziativa di : ' + sottoiniziativa.iniziativa.nome}
 
     # Visualizza il template.
-    return render(request, 'iniziative/sub_cu.html', context_dict)
+    return render(request, 'si_cu_formasp_t1.html', context_dict)
 
 
 @login_required()
@@ -250,10 +273,11 @@ def gruppo_add(request, pk_sub):
         form = GruppoForm()
 
     # Popola il dizionario per il template.
-    context_dict = {'form': form, 'sottoiniziativa': sottoiniziativa}
+    context_dict = {'form': form, 'sottoiniziativa': sottoiniziativa, 'blocktitle': 'Raggruppamento', 'header':
+                    'Raggruppamento di : ' + sottoiniziativa.nome}
 
     # Visualizza il template.
-    return render(request, 'iniziative/grp_cu.html', context_dict)
+    return render(request, 'si_cu_formasp_t1.html', context_dict)
 
 
 @login_required()
@@ -284,10 +308,11 @@ def gruppo_edit(request, pk):
         form = GruppoForm(instance=gruppo)
 
     # Popola il dizionario per il template.
-    context_dict = {'form': form, 'sottoiniziativa': gruppo.sotto_iniziativa}
+    context_dict = {'form': form, 'sottoiniziativa': gruppo.sotto_iniziativa, 'blocktitle': 'Raggruppamento', 'header':
+                    'Raggruppamento di : ' + gruppo.sotto_iniziativa.nome}
 
     # Visualizza il template.
-    return render(request, 'iniziative/grp_cu.html', context_dict)
+    return render(request, 'si_cu_formasp_t1.html', context_dict)
 
 
 @login_required()
@@ -335,4 +360,80 @@ def gruppo_detail(request, pk_grp):
 
     # Visualizza il template.
     return render(request, 'iniziative/grp_detail.html', context_dict)
+# endregion
+
+
+# region API
+@login_required()
+def get_iniziative(request):
+    print("Chiamata AJAX iniziative")
+    if request.is_ajax():
+        # q = request.GET.get('term', '')
+        iniziative = Iniziativa.objects.all()
+        results = []
+        for iniziativa in iniziative:
+            stringa_json = {'text': iniziativa.nome,
+                            'id': iniziativa.pk
+                            }
+            results.append(stringa_json)
+        data = json.dumps(results)
+        print(data)
+    else:
+        data = 'fail'
+    mimetype = 'application/json'
+    return HttpResponse(data, mimetype)
+
+
+@login_required()
+def get_sottoiniziative(request):
+    print("Chiamata AJAX sotto iniziative")
+    if request.is_ajax():
+        pk = request.GET.get('pk', '')
+        print('pk = ', pk)
+        try:
+            # Recupera la sottoiniziativa.
+            sottoiniziative = SottoIniziativa.objects.filter(iniziativa=pk)
+
+        except SottoIniziativa.DoesNotExist:
+            # Se la sotto iniziativa non esiste non fa nulla in quanto il caso è già contemplato nel template.
+            pass
+        results = []
+        for sottoiniziativa in sottoiniziative:
+            stringa_json = {}
+            stringa_json['text'] = sottoiniziativa.nome
+            stringa_json['id'] = sottoiniziativa.pk
+            results.append(stringa_json)
+        data = json.dumps(results)
+        print(data)
+    else:
+        data = 'fail'
+    mimetype = 'application/json'
+    return HttpResponse(data, mimetype)
+
+
+@login_required()
+def get_raggruppamenti(request):
+    print("Chiamata AJAX raggruppamenti")
+    if request.is_ajax():
+        pk = request.GET.get('pk', '')
+        print('pk = ', pk)
+        try:
+            # Recupera i raggruppamenti.
+            raggruppamenti = Raggruppamento.objects.filter(sotto_iniziativa=pk)
+
+        except Raggruppamento.DoesNotExist:
+            # Se il raggruppamento non esiste non fa nulla in quanto il caso è già contemplato nel template.
+            pass
+        results = []
+        for raggruppamento in raggruppamenti:
+            stringa_json = {}
+            stringa_json['text'] = raggruppamento.nome
+            stringa_json['id'] = raggruppamento.pk
+            results.append(stringa_json)
+        data = json.dumps(results)
+        print(data)
+    else:
+        data = 'fail'
+    mimetype = 'application/json'
+    return HttpResponse(data, mimetype)
 # endregion

@@ -1,25 +1,30 @@
 {% extends "base.html" %}
-{% load bootstrap3 %}
 
 {% block title %}SottoIniziativa{% endblock %}
 {% block header %}Sottoiniziativa di : <strong>{{ iniziativa.nome }}</strong>{% endblock %}
 
 {% block body_block %}
-    <form role="form" class="form-horizontal" method="post">
-        {% csrf_token %}
+<script>
+    function submitForm(){
+        document.getElementById("ff").submit();
+    }
 
-        {% bootstrap_form form layout="horizontal" %}
+    function clearForm(){
+        document.getElementById("ff").reset();
+    }
+</script>
 
-        {% buttons size='sm' layout='horizontal' %}
-            <button type="submit" class="btn btn-primary">
-                {% bootstrap_icon "save" %} Ok
-            </button>
-            <button type="reset" class="btn btn-default">
-                Pulisci Campi
-            </button>
-            <input class="btn btn-info" type="button" onclick="window.location = '{% url 'iniziative:detail' iniziativa.pk %}'" value="Indietro">
-        {% endbuttons %}
-    </form>
+<form id="ff" class="easyui-panel" method="post">
+    {% csrf_token %}
+
+    {{ form.as_p }}
+
+    <div align="center">
+        <a href="javascript:void(0)" class="easyui-linkbutton" onclick="submitForm()" data-options="iconCls:'icon-save'">Salva</a>
+        <a href="javascript:void(0)" class="easyui-linkbutton" onclick="clearForm()" data-options="iconCls:'icon-clear'">Clear</a>
+        <a href="javascript:void(0)" class="easyui-linkbutton" onclick="window.location = '{% url 'iniziative:detail' iniziativa.pk %}'"
+           data-options="iconCls:'icon-back'">Indietro
+        </a>
+    </div>
+</form>
 {% endblock %}
-
-{% block side_block %}:){% endblock %}

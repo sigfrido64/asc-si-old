@@ -10,27 +10,27 @@
     {% si_dc_dialog %}
 
     {% if lista_iniziative %}
-        <div class="row col-md-11">
-            <table class="table table-bordered table-hover">
+        <div>
+            <table class="easyui-datagrid">
                 <thead>
                     <tr>
-                        <th class="text-center">Nome</th>
-                    <th class="text-center">Descrizione</th>
-                        <th class="text-center">Azione</th>
+                        <th data-options="field:'Nome'">Nome</th>
+                        <th data-options="field:'Descrizione'">Descrizione</th>
+                        <th data-options="field:'Azione'">Azione</th>
                     </tr>
                 </thead>
 
                 <tbody>
                 {% for iniziativa in lista_iniziative %}
                     <tr>
-                        <td><li><a class="sphinxsidebar" href="{% url 'iniziative:detail' iniziativa.pk %}">{{ iniziativa.nome }}</a></li></td>
+                        <td><a href="{% url 'iniziative:detail' iniziativa.pk %}">{{ iniziativa.nome }}</a></td>
                         <td>{{ iniziativa.descrizione }}</td>
                         <td>
                             <a titolo="Cancellazione Iniziativa" item="{{ iniziativa.nome }}"
                                link="{% url 'iniziative:delete' iniziativa.pk %}"
-                               class="remove_link glyphicon glyphicon-remove" href="{% url 'index' %}">
-                            </a>
-                            <a class="glyphicon glyphicon-edit" href="{% url 'iniziative:edit' iniziativa.pk %}"></a>
+                               class="easyui-linkbutton remove_link" iconCls="icon-cancel" href="{% url 'index' %}">
+                            Del</a>
+                            <a class="easyui-linkbutton" iconCls="icon-edit" href="{% url 'iniziative:edit' iniziativa.pk %}">Edit</a>
                         </td>
                     </tr>
                 {% endfor %}
@@ -38,13 +38,16 @@
             </table>
         </div>
     {% else %}
-        <div class="row col-md-11 text-center jumbotron">
-            <strong>Nessuna Presente !</strong>
+       <div class="si-title">Iniziative</div>
+        <div class="jumbotron">
+            Nessuna Presente !
         </div>
     {% endif %}
 
-    <div class="row col-md-11">
-        <a class="btn btn-primary" href="{% url 'iniziative:add' %}" role="button">Aggiungi iniziativa</a>
+    <div align="center">
+        <p>
+            <a class="easyui-linkbutton" iconCls="icon-add" href="{% url 'iniziative:add' %}">Aggiungi iniziativa</a>
+        </p>
     </div>
 {% endblock %}
 

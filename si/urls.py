@@ -29,6 +29,9 @@ urlpatterns = patterns(
     url(r'^si/iniziative/', include('iniziative.urls', namespace="iniziative", app_name="iniziative")),
     url(r'^si/fs/', include('sifilesmanager.urls', namespace="fs", app_name="fs")),
     url(r'^si/corsi/', include('corsi.urls', namespace="corsi", app_name="corsi")),
+    url(r'^si/segnalazioni/', include('segnalazioni.urls', namespace="segnalazioni", app_name="segnalazioni")),
+    url(r'^si/op/', include('op.urls', namespace="op", app_name="op")),
+    url(r'^si/aziende/', include('aziende.urls', namespace="aziende", app_name="aziende")),
     ) + static(settings.SIFILEDATA_URL, document_root=settings.SIFILEDATA_ROOT)
 
 

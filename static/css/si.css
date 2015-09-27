@@ -1,0 +1,59 @@
+.jumbotron {
+  padding: 30px 15px;
+  margin-bottom: 30px;
+  color: #0000FF;
+  background-color: #eee;
+  text-align: center;
+  font-size: 150%;
+  font-weight: bold;
+}
+.thead {
+  color: #0000FF;
+  text-align: center;
+  font-size: 120%;
+  font-weight: bold;
+}
+.text-left {
+  text-align: left;
+}
+.text-right {
+  text-align: right;
+}
+.text-center {
+  text-align: center;
+}
+.text-justify {
+  text-align: justify;
+}
+.text-nowrap {
+  white-space: nowrap;
+}
+small {
+  font-size: 80%;
+}
+.small {
+  font-size: 80%;
+}
+.si-title {
+  font-size: 150%;
+  font-weight: bold;
+  color: #fff;
+  height: 16px;
+  line-height: 16px;
+  border-style:solid;
+  border-color:#000000;
+  text-align: center;
+  padding: 10px;
+}
+ul.errorlist {
+        margin: 0;
+        padding: 0;
+}
+.errorlist li {
+    background-color: red;
+    color: white;
+    display: block;
+    font-size: 10px;
+    margin: 0 0 3px;
+    padding: 4px 5px;
+}

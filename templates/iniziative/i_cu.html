@@ -1,27 +1,31 @@
 {% extends "base.html" %}
-{% load bootstrap3 %}
 
 {% block title %}Iniziativa{% endblock %}
 {% block header %}Iniziativa{% endblock %}
 
 {% block body_block %}
+<script>
+    function submitForm(){
+        document.getElementById("ff").submit();
+    }
 
-    <form role="form" class="form-horizontal" method="post">
-        {% csrf_token %}
+    function clearForm(){
+        document.getElementById("ff").reset();
+    }
+</script>
 
-        {% bootstrap_form form layout="horizontal" %}
+<form id="ff" class="easyui-panel" method="post">
+    {% csrf_token %}
 
-        {% buttons size='sm' layout='horizontal' %}
-            <button type="submit" class="btn btn-primary">
-                {% bootstrap_icon "save" %} Ok
-            </button>
-            <button type="reset" class="btn btn-default">
-                Pulisci Campi
-            </button>
-            <input class="btn btn-info" type="button" onclick="window.location = '{% url 'iniziative:index' %}'" value="Indietro">
-        {% endbuttons %}
-    </form>
+    {{ form.as_p }}
 
+    <div align="center">
+        <a href="javascript:void(0)" class="easyui-linkbutton" onclick="submitForm()" data-options="iconCls:'icon-save'">Salva</a>
+        <a href="javascript:void(0)" class="easyui-linkbutton" onclick="clearForm()" data-options="iconCls:'icon-clear'">Clear</a>
+        <a href="javascript:void(0)" class="easyui-linkbutton" onclick="window.location = '{% url 'iniziative:index' %}'"
+           data-options="iconCls:'icon-back'">Indietro
+        </a>
+    </div>
+</form>
 {% endblock %}
 
-{% block side_block %}:){% endblock %}

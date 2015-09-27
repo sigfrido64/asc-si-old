@@ -5,53 +5,49 @@
 
 {% block body_block %}
 
-<div class="row">
-    <div class="col-md-4 bg-success">
-        <p class="lead"><ins>Raggruppamento : {{ gruppo.nome }}</ins></p>
-        <p>
+<table border="1" style="width:100%">
+    <tr class="thead">
+        <td>Raggruppamento : {{ gruppo.nome }}</td>
+        <td>Sotto Iniziativa Padre : {{ sottoiniziativa.nome }}</td>
+        <td>Iniziativa Radice : {{ iniziativa.nome }}</td>
+    </tr>
+    <tr>
+        <td>
             Descrizione: {{ gruppo.descrizione }}<br>
             Ordine: {{ gruppo.ordine }}<br>
             In uso : {{ gruppo.in_uso|yesno:"Si,No" }}
-        </p>
-        <p class="small">
-            Data Aggiornamento: {{ gruppo.data_aggiornamento|date }}<br>
-            Data Creazione: {{ gruppo.data_creazione|date }}
-        </p>
-    </div>
-
-
-    <div class="row col-md-3 col-md-offeset-1">
-        <p class="lead"><ins>Sotto Iniziativa Padre : {{ sottoiniziativa.nome }}</ins></p>
-        <p>
+        </td>
+        <td>
             Descrizione: {{ sottoiniziativa.descrizione }}<br>
             In uso : {{ sottoiniziativa.in_uso|yesno:"Si,No" }}
-        </p>
-        <p class="small">
-            Data Aggiornamento: {{ sottoiniziativa.data_aggiornamento|date }}<br>
-            Data Creazione: {{ sottoiniziativa.data_creazione|date }}
-        </p>
-    </div>
-
-    <div class="row col-md-3 col-md-offset-1">
-        <p class="lead"><ins>Iniziativa Radice : {{ iniziativa.nome }}</ins></p>
-        <p>
+        </td>
+        <td>
             Descrizione: {{ iniziativa.descrizione }}<br>
             CUP/CIG: {{ iniziativa.cup_cig }}<br>
             In uso : {{ iniziativa.in_uso|yesno:"Si,No" }}
-        </p>
-        <p class="small">
+        </td>
+    </tr>
+    <tr class="small">
+        <td>
+            Data Aggiornamento: {{ gruppo.data_aggiornamento|date }}<br>
+            Data Creazione: {{ gruppo.data_creazione|date }}
+        </td>
+        <td>
+            Data Aggiornamento: {{ sottoiniziativa.data_aggiornamento|date }}<br>
+            Data Creazione: {{ sottoiniziativa.data_creazione|date }}
+        </td>
+        <td>
             Data Aggiornamento: {{ iniziativa.data_aggiornamento|date }}<br>
             Data Creazione: {{ iniziativa.data_creazione|date }}
-        </p>
-    </div>
-</div>
+        </td>
+    </tr>
+</table>
 
-
-<div class="row col-md-4">
-        <br>
-        <input class="btn btn-default" type="button" onclick="window.location = '{% url 'iniziative:sub_detail' sottoiniziativa.pk %}'" value="Indietro">
-        <input class="btn btn-default" type="button" onclick="window.location = '{% url 'iniziative:grp_edit' gruppo.pk %}'" value="Edit">
-        <br><br>
-</div>
+<p class="text-center">
+    <a href="javascript:void(0)" class="easyui-linkbutton" onclick="window.history.back();"
+           data-options="iconCls:'icon-back'">Indietro
+    </a>
+    <a class="easyui-linkbutton" iconCls="icon-edit" href="{% url 'iniziative:grp_edit' gruppo.pk %}">Modifica</a>
+</p>
 
 {% endblock %}

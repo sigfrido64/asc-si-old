@@ -1,6 +1,17 @@
 # coding=utf-8
+from mongoengine import *
 from django.db import models
 from django.core.validators import MinLengthValidator
+
+
+class Choice(EmbeddedDocument):
+    choice_text = StringField(max_length=200)
+    votes = IntField(default=0)
+
+class Poll(Document):
+    question = StringField(max_length=200)
+    pub_date = DateTimeField(help_text='date published')
+    choices = ListField(EmbeddedDocumentField(Choice))
 
 
 class Iniziativa(models.Model):
@@ -60,4 +71,3 @@ class Raggruppamento(models.Model):
 
     def __str__(self):
         return self.nome + ' ' + self.descrizione
-

@@ -41,3 +41,9 @@ Thumbs.db
 
 # Ignoro i files di configurazione di PyCharm
 .idea/
+
+# Ignoro tutti i files relativi agli ambienti virtuali.
+Lib/
+Scripts/
+Include/
+
