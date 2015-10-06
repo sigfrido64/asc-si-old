@@ -43,7 +43,12 @@
                 <a href="{% url 'index' %}" class="easyui-linkbutton" data-options="plain:true">Home</a>
                 {% if user.is_authenticated %}
                     <a href="{% url 'iniziative:index' %}" class="easyui-linkbutton" data-options="plain:true">Iniziative (Obsoleto)</a>
-                    <a href="{% url 'op:index' %}" class="easyui-linkbutton" data-options="plain:true">Ordini</a>
+                    {% if 'ordini' in perm.permissions %}
+                        <a href="{% url 'op:index' %}" class="easyui-linkbutton" data-options="plain:true">Ordini</a>
+                    {% endif %}
+                    {% if 'corsi' in perm.permissions %}
+                        <a href="{% url 'corsi:index' %}" class="easyui-linkbutton" data-options="plain:true">Corsi</a>
+                    {% endif %}
                     {% comment %}
                         <a href="{% url 'fs:index' %}" class="easyui-linkbutton" data-options="plain:true">File System</a>
                         <a href="{% url 'corsi:index' %}" class="easyui-linkbutton" data-options="plain:true">Gestione Corsi</a>

@@ -3,7 +3,7 @@ from django.shortcuts import render
 from django.contrib.auth.decorators import login_required
 from django.http import HttpResponse, Http404, HttpResponseRedirect
 from .forms import CorsoForm
-from .models import Corso
+from .models import Corso, UserPermissions
 from django.core.urlresolvers import reverse
 import json
 
@@ -20,8 +20,12 @@ def index(request):
     """
     Lista dei corsi in ordine alfabetico
     """
+    perm = get_obj_or_404(UserPermissions, user=request.user.get_username())
+    if 'corsi' not in perm.permissions:
+        return Http404
+
     lista_corsi = Corso.objects().order_by('codice_corso')
-    context_dict = {'lista_corsi': lista_corsi}
+    context_dict = {'lista_corsi': lista_corsi, 'perm': perm}
 
     # Visualizza la risposta.
     return render(request, 'corsi/index.html', context_dict)
@@ -32,9 +36,13 @@ def add_edit(request, pk=None):
     """
     Aggiunge o edita un corso.
     """
+    perm = get_obj_or_404(UserPermissions, user=request.user.get_username())
+    if 'corsi' not in perm.permissions:
+        return Http404
+
     # Se è specificata una pk prova a recuperare il record altrimenti si tratta di un inserimento e procedo oltre.
     if pk:
-        corso = get_obj_or_404(Corso, codice_corso=pk)
+        corso = get_obj_or_404(Corso, codice_edizione=pk)
     else:
         corso = Corso()
 
@@ -58,12 +66,10 @@ def add_edit(request, pk=None):
     # Visualizza il template.
     return render(request, 'corsi/add_edit.html', context_dict)
 
-
+"""
 @login_required()
 def corso_add(request):
-    """
     CORSO : Aggiunta di un nuovo corso.
-    """
 
     # Legge i dati dal POST e li analizza per salvarli
     if request.method == 'POST':
@@ -82,11 +88,11 @@ def corso_add(request):
 
     # Visualizza il template.
     return render(request, 'iniziative/sub_cu.html', context_dict)
+"""
 
-
-
-
-
+#
+# Sezione API
+#
 def get_corsi(request):
     print("Chiamata")
     if request.is_ajax():

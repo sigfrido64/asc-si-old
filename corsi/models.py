@@ -7,16 +7,21 @@ from django.core.validators import MinLengthValidator, ValidationError
 from mongoengine import fields, Document
 
 
+class UserPermissions(Document):
+    user = fields.StringField(primary_key=True)
+    permissions = fields.ListField(fields.StringField(max_length=10))
+
+
 class Corso(Document):
     """
     Definizione dei corsi
     """
     codice_edizione = fields.StringField(primary_key=True, max_length=10)
     denominazione = fields.StringField(max_length=150)
+    ordine = fields.ReferenceField('OrdineProduzione')
     data_inizio = fields.DateTimeField()
     data_fine = fields.DateTimeField()
     durata = fields.IntField(default=8)
-    ordine = fields.IntField()
     note = fields.StringField(max_length=1000)
 
     class Meta:

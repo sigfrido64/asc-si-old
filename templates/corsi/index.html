@@ -7,25 +7,25 @@
 
 {% block body_block %}
 
-    {% if object_list %}
+    {% if lista_corsi %}
         <div>
             <table class="easyui-datagrid">
                 <thead>
                     <tr>
                         <th data-options="field:'Codice Corso'">Codice Corso</th>
                         <th data-options="field:'Denominazione'">Denominazione</th>
-                        <th data-options="field:'Corsi'">Corsi</th>
-                        <th data-options="field:'Stato'">Stato</th>
+                        <th data-options="field:'Durata'">Durata</th>
+                        <th data-options="field:'Ordine'">Ordine</th>
                     </tr>
                 </thead>
 
                 <tbody>
-                {% for ordine in lista_ordini %}
+                {% for corso in lista_corsi %}
                     <tr>
-                        <td><a href="{% url 'op:edit' ordine.ordine_numero %}">{{ ordine.ordine_numero }}</a></td>
-                        <td>{{ ordine.committenti }}</td>
-                        <td>{{ ordine.corsi }}</td>
-                        <td>{{ ordine.stato }}</td>
+                        <td><a href="{% url 'corsi:edit' corso.codice_edizione %}">{{ corso.codice_edizione }}</a></td>
+                        <td>{{ corso.denominazione }}</td>
+                        <td>{{ corso.durata }}</td>
+                        <td>{{ corso.ordine }}</td>
                     </tr>
                 {% endfor %}
                 </tbody>
@@ -36,6 +36,12 @@
             <strong>Nessuno Presente !</strong>
         </div>
     {% endif %}
+
+    <div align="center">
+        <p>
+            <a class="easyui-linkbutton" iconCls="icon-add" href="{% url 'corsi:add' %}">Nuovo Corso</a>
+        </p>
+    </div>
 
 {% endblock %}
 

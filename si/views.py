@@ -3,29 +3,41 @@ __author__ = 'Sig'
 
 from django.shortcuts import render
 from django.contrib.auth import authenticate, login, logout
-from django.http import HttpResponseRedirect, HttpResponse
+from django.http import HttpResponseRedirect, HttpResponse, Http404
 from django.contrib.auth.decorators import login_required
 from django.contrib import messages
+from corsi.models import UserPermissions
+
+
+def get_obj_or_404(klass, *args, **kwargs):
+    try:
+        return klass.objects.get(*args, **kwargs)
+    except klass.DoesNotExist:
+        raise Http404
 
 
 def about(request):
     """
     About View
     """
+    perm = get_obj_or_404(UserPermissions, user=request.user.get_username())
+    context_dict = {'perm': perm}
 
     messages.warning(request, 'Your account expires in three days.')
 
     # Visualizzo il form delle iniziative.
-    return render(request, 'about.html')
+    return render(request, 'about.html', context_dict)
 
 
 def index(request):
     """
     Indice dell'applicazione
     """
+    perm = get_obj_or_404(UserPermissions, user=request.user.get_username())
+    context_dict = {'perm': perm}
 
     # Visualizzo il form delle iniziative.
-    return render(request, 'index.html')
+    return render(request, 'index.html', context_dict)
 
 
 def user_login(request):
