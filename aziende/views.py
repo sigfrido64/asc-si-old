@@ -1,3 +1,4 @@
+# coding=utf-8
 from django.shortcuts import render
 from django.contrib.auth.decorators import login_required
 from django.http import HttpResponse
@@ -16,7 +17,7 @@ def get_listaziende(request):
             return
         try:
             # Recupera le prime 20 aziende con le iniziali date.
-            # Sar‡ da migliorare con la ricerca full text di Mongo ? TODO
+            # Sar√† da migliorare con la ricerca full text di Mongo ? TODO
             aziende = Azienda.objects.filter(ragione_sociale__icontains=ini)
         except Azienda.DoesNotExist:
             # Se non trova aziende con quel testo pazienza, vuol dire che non ce ne sono

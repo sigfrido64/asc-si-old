@@ -1,0 +1,2 @@
+{ "_id" : "sig", "permissions" : [ "corsi", "ordini" ] }
+{ "_id" : "admin", "permissions" : [ "corsi", "ordini" ] }
