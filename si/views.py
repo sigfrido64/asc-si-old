@@ -36,7 +36,7 @@ def index(request):
     perm = get_obj_or_404(UserPermissions, user=request.user.get_username())
     context_dict = {'perm': perm}
 
-    # Visualizzo il form delle iniziative.
+    # Visualizzo il form iniziale.
     return render(request, 'index.html', context_dict)
 
 

@@ -51,6 +51,7 @@ ALLOWED_HOSTS = []
 # Application definition
 # Admin password = radice
 # Ho tolto 'docusign'
+# Ho tolto 'localflavor' perchè sembra che non serva a nulla e crea solo problemi con Django quando parte
 
 INSTALLED_APPS = (
     'django.contrib.admin',
@@ -59,7 +60,6 @@ INSTALLED_APPS = (
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    'localflavor',
     'iniziative',
     'sifilesmanager',
     'corsi',
