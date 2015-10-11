@@ -1,42 +1,36 @@
 # coding=utf-8
-__author__ = 'Sig'
-
 from django.shortcuts import render
 from django.contrib.auth import authenticate, login, logout
-from django.http import HttpResponseRedirect, HttpResponse, Http404
+from django.http import HttpResponseRedirect, HttpResponse
 from django.contrib.auth.decorators import login_required
 from django.contrib import messages
-from corsi.models import UserPermissions
-
-
-def get_obj_or_404(klass, *args, **kwargs):
-    try:
-        return klass.objects.get(*args, **kwargs)
-    except klass.DoesNotExist:
-        raise Http404
+from sigutil import get_obj_or_404, UserPermissions
 
 
 def about(request):
     """
     About View
     """
-    perm = get_obj_or_404(UserPermissions, user=request.user.get_username())
-    context_dict = {'perm': perm}
-
     messages.warning(request, 'Your account expires in three days.')
 
     # Visualizzo il form delle iniziative.
-    return render(request, 'about.html', context_dict)
+    return render(request, 'about.html')
 
 
 def index(request):
     """
-    Indice dell'applicazione
+    Visualizzo il form iniziale.
+    Attenzione che qui posso arrivare con un utente autenticato oppure no e questo cambia completamente la
+    modalità di visualizzazione dei menu
     """
-    perm = get_obj_or_404(UserPermissions, user=request.user.get_username())
-    context_dict = {'perm': perm}
+    # Se l'utente è autenticato vado a cercare i suoi permessi, altrimenti non ne ha nessuno !
+    if request.user.is_authenticated():
+        perm = get_obj_or_404(UserPermissions, user=request.user.get_username())
+    else:
+        perm = {}
 
     # Visualizzo il form iniziale.
+    context_dict = {'perm': perm}
     return render(request, 'index.html', context_dict)
 
 

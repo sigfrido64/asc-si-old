@@ -1,16 +1,9 @@
 # coding=utf-8
 from django.conf import settings
-
 from django.conf.urls import patterns, include, url
 from django.contrib import admin
 from django.conf.urls.static import static
-
 from .views import about, index, user_login, user_logout
-
-from sifilesmanager.views import fileupload
-
-# from django.conf import settings
-# from django.conf.urls.static import static
 
 
 urlpatterns = patterns(
@@ -33,16 +26,3 @@ urlpatterns = patterns(
     url(r'^si/op/', include('op.urls', namespace="op", app_name="op")),
     url(r'^si/aziende/', include('aziende.urls', namespace="aziende", app_name="aziende")),
     ) + static(settings.SIFILEDATA_URL, document_root=settings.SIFILEDATA_ROOT)
-
-
-"""
-    url(r'^$', ProfileImageIndexView.as_view(), name='home'),
-
-
-    url(
-        r'^uploaded/(?P<pk>\d+)/$', ProfileDetailView.as_view(),
-        name='profile_image'),
-
-    url(r'^admin/', include(admin.site.urls)),
-) + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
-"""
