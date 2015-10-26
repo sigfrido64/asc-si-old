@@ -4,17 +4,10 @@ from django.shortcuts import render
 from django.contrib.auth.decorators import login_required
 from .forms import OrdineProduzioneForm
 from .models import OrdineProduzione
-from corsi.models import UserPermissions
+from  sigutil import UserPermissions, get_obj_or_404
 from django.http import HttpResponseRedirect, Http404, HttpResponse
 from django.core.urlresolvers import reverse
 import json
-
-
-def get_obj_or_404(klass, *args, **kwargs):
-    try:
-        return klass.objects.get(*args, **kwargs)
-    except klass.DoesNotExist:
-        raise Http404
 
 
 @login_required()

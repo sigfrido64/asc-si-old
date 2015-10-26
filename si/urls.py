@@ -18,7 +18,6 @@ urlpatterns = patterns(
     url(r'^logout/$', user_logout, name='logout'),
     url(r'^about/$', about, name='about'),
     url(r'^admin/', include(admin.site.urls)),
-    url(r'^corsi/', include('corsi.urls', namespace="corsi", app_name="corsi")),
     url(r'^si/iniziative/', include('iniziative.urls', namespace="iniziative", app_name="iniziative")),
     url(r'^si/fs/', include('sifilesmanager.urls', namespace="fs", app_name="fs")),
     url(r'^si/corsi/', include('corsi.urls', namespace="corsi", app_name="corsi")),

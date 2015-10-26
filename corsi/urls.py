@@ -2,6 +2,7 @@
 
 from django.conf.urls import patterns, url
 from .views import index, get_corsi, add_edit
+from .views import lezioni_getall, lezione_add, lezione_upd, lezione_del
 
 
 urlpatterns = patterns('',
@@ -9,4 +10,8 @@ urlpatterns = patterns('',
                        url(r'^add/$', add_edit, name='add'),
                        url(r'^edit/(?P<pk>\w+)$', add_edit, name='edit'),
                        url(r'^api/get_corsi$', get_corsi, name='get_corsi'),
+                       url(r'^api/lezioni_getall', lezioni_getall, name='lezioni_getall'),
+                       url(r'^api/lezione_add/$', lezione_add, name='lezione_add'),
+                       url(r'^api/lezione_upd', lezione_upd, name='lezione_upd'),
+                       url(r'^api/lezione_del', lezione_del, name='lezione_del'),
                        )

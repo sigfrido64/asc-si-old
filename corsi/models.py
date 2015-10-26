@@ -2,19 +2,27 @@
 """
     Corsi
 """
-from django.db import models
-from django.core.validators import MinLengthValidator, ValidationError
-from mongoengine import fields, Document
+# from django.db import models
+from django.core.validators import ValidationError
+from mongoengine import fields, Document, EmbeddedDocument, EmbeddedDocumentField
 
 
-class UserPermissions(Document):
-    user = fields.StringField(primary_key=True)
-    permissions = fields.ListField(fields.StringField(max_length=10))
+class Lezione(EmbeddedDocument):
+    """
+    Definizione di una lezione.
+    """
+    id = fields.ObjectIdField(primary_key=True, required=True)
+    data = fields.StringField()
+    inizio = fields.StringField()
+    fine = fields.StringField()
+    anno = fields.IntField()
+    doy = fields.IntField()
+    ore = fields.FloatField()
 
 
 class Corso(Document):
     """
-    Definizione dei corsi
+    Definizione del corso
     """
     codice_edizione = fields.StringField(primary_key=True, max_length=10)
     denominazione = fields.StringField(max_length=150)
@@ -23,6 +31,8 @@ class Corso(Document):
     data_fine = fields.DateTimeField()
     durata = fields.IntField(default=8)
     note = fields.StringField(max_length=1000)
+
+    lezioni = fields.ListField(EmbeddedDocumentField(Lezione))
 
     class Meta:
         verbose_name = "Corso"

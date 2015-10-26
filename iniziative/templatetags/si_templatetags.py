@@ -1,8 +1,5 @@
 # coding=utf-8
-__author__ = 'Sig'
-
 from django import template
-
 register = template.Library()
 
 
