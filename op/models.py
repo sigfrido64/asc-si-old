@@ -12,6 +12,7 @@ class OrdineProduzione(Document):
 
     committenti = StringField(max_length=100)
     corsi = StringField(max_length=200)
+    persona_di_riferimento = StringField()
 
     cup = StringField(max_length=20)
     cig = StringField(max_length=20)
@@ -21,6 +22,8 @@ class OrdineProduzione(Document):
 
     data_inizio = DateTimeField()
     data_fine = DateTimeField()
+
+    prot_gestione = IntField()
 
     note = StringField(max_length=200)
 

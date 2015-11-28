@@ -9,15 +9,18 @@ class OrdineProduzioneForm(DocumentForm):
     class Meta:
         model = OrdineProduzione
 
-        fields = ['ordine_numero', 'committenti', 'corsi', 'stato', 'cup', 'cig', 'cdc', 'note']
+        fields = ['ordine_numero', 'committenti', 'persona_di_riferimento', 'corsi', 'stato', 'cup', 'cig', 'cdc',
+                  'prot_gestione', 'note']
 
         widgets = {
             'ordine_numero': TextInput(attrs={'class': 'easyui-textbox'}),
             'committenti': TextInput(attrs={'class': 'easyui-textbox', 'style': 'width:300px'}),
             'cup': TextInput(attrs={'class': 'easyui-textbox'}),
+            'persona_di_riferimento': TextInput(attrs={'class': 'easyui-textbox'}),
             'cig': TextInput(attrs={'class': 'easyui-textbox'}),
             'stato': TextInput(attrs={'class': 'easyui-textbox'}),
             'cdc': TextInput(attrs={'class': 'easyui-textbox'}),
+            'prot_gestione': TextInput(attrs={'class': 'easyui-textbox'}),
             'corsi': TextInput(attrs={'class': 'easyui-textbox', 'style': 'width:300px'}),
             'note': Textarea(attrs={'class': 'easyui-textbox', 'data-options': 'multiline:true',
                                     'style': 'width:300px;height:100px'}),

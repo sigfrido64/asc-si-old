@@ -65,6 +65,8 @@ INSTALLED_APPS = (
     'corsi',
     'aziende',
     'op',
+    'debug_toolbar',
+    'tasker',
 )
 
 MIDDLEWARE_CLASSES = (
@@ -84,7 +86,7 @@ WSGI_APPLICATION = 'si.wsgi.application'
 
 
 # Connessione a MongoDB usando MongoEngine
-connect(db='asc')
+connect(db='asc', username='ascUser', password='123')
 
 # Database
 # https://docs.djangoproject.com/en/dev/ref/settings/#databases
@@ -135,7 +137,6 @@ STATICFILES_DIRS = (
     STATIC_PATH,
 )
 
-
 #
 # Qui invece salvo i file di cui faccio l'upload.
 MEDIA_ROOT = os.path.join(BASE_DIR, 'uploads')
@@ -153,3 +154,5 @@ BOOTSTRAP3 = {
     'required_css_class': 'bootstrap3-required',
     'javascript_in_head': True,
 }
+
+LOGIN_REDIRECT_URL = 'index'

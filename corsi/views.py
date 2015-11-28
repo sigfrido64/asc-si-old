@@ -3,11 +3,24 @@ from django.shortcuts import render
 from django.contrib.auth.decorators import login_required
 from django.http import HttpResponse, Http404, HttpResponseRedirect
 from .forms import CorsoForm
-from .models import Corso, Lezione
+from .models import Corso, Lezione, CartelleCorsoTask
 from django.core.urlresolvers import reverse
 from sigutil import UserPermissions, get_obj_or_404
 from bson.objectid import ObjectId
 import json
+
+
+def task_dispatcher(corso, vecchio_stato, nuovo_stato):
+    # Passaggio da BOZZA a ...
+    if vecchio_stato == 0:
+        # PIANIFICATO : Emissione della richiesta di creazione della cartella corso.
+        if nuovo_stato == 10:
+            newtask = CartelleCorsoTask()
+            newtask.corso = corso
+            newtask.anno_formativo = "2015-2016"  # TODO Questo deve arrivare dal corso
+            newtask.tipologia = "FAP"    # TODO Questo deve arrivare dal corso
+            newtask.save()
+    return
 
 
 @login_required()
@@ -45,15 +58,19 @@ def add_edit(request, pk=None):
 
     if request.method == 'POST':
         form = CorsoForm(request.POST)
-        print(request.POST)
         if form.is_valid():
+            # Se si tratta di un aggiornamento valuto eventuali azioni.
+            if pk:
+                corso_old = get_obj_or_404(Corso, codice_edizione=pk)
+                task_dispatcher(corso=corso_old.pk, vecchio_stato=corso_old.stato,
+                                nuovo_stato=form.cleaned_data.get('stato'))
             post = form.save(commit=False)
            #  post['data_inizio'] = form.cleaned_data['data1']
             post.save()
             return HttpResponseRedirect(reverse('corsi:index'))
         else:
+            print("Macchecazzo")
             print(form.errors)
-
     else:
         form = CorsoForm(instance=corso, initial={'data1': '10/09/2014'})
 
@@ -106,6 +123,7 @@ def lezioni_getall(request):
         lezione_json['inizio'] = lezione.inizio
         lezione_json['fine'] = lezione.fine
         lezione_json['ore'] = lezione.ore
+        lezione_json['sede'] = lezione.sede
 
         results.append(lezione_json)
 
@@ -132,6 +150,7 @@ def lezione_add(request):
     lezione.data = request.GET.get('data', '')
     lezione.inizio = request.GET.get('inizio', '')
     lezione.fine = request.GET.get('fine', '')
+    lezione.sede = request.GET.get('sede', '')
 
     # Appendo al corso.
     corso.lezioni.append(lezione)
@@ -169,6 +188,7 @@ def lezione_upd(request):
     lezione.data = request.GET.get('data', '')
     lezione.inizio = request.GET.get('inizio', '')
     lezione.fine = request.GET.get('fine', '')
+    lezione.sede = request.GET.get('sede', '')
 
     # Salvo il tutto.
     corso.save()

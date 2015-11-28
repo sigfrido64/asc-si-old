@@ -3,8 +3,33 @@
     Corsi
 """
 # from django.db import models
-from django.core.validators import ValidationError
-from mongoengine import fields, Document, EmbeddedDocument, EmbeddedDocumentField
+from mongoengine import fields, Document, EmbeddedDocument, EmbeddedDocumentField, ValidationError
+from tasker.models import Task
+
+
+class CartelleCorsoTask(Task):
+    # Lista dei possibili stati
+    STATO_ESEGUITO = 100
+    STATO_IN_LAVORAZIONE = 10
+    STATO_ATTESA_LAVORAZIONE = 0
+    STATO_ERRORE = -1
+    STATO_ATTESA_GESTIONE_ERRORE = -2
+    STATO_ARCHIVIARE = -10
+
+    # Nome del processo distribuito per gli heartbeat
+    PROCESSO = "Cartelle Corso"
+
+    # Timeout prima di considerare il processo morto
+    TIMEOUT = 360
+
+    # Tempo per il quale il task deve dormire tra un'iterazione e l'altra.
+    # LOOP < TIMEOUT ovviamente !!!
+    LOOP = 300
+
+    # Finalmente definisco i campi !
+    corso = fields.StringField()
+    anno_formativo = fields.StringField()
+    tipologia = fields.StringField()
 
 
 class Lezione(EmbeddedDocument):
@@ -15,6 +40,7 @@ class Lezione(EmbeddedDocument):
     data = fields.StringField()
     inizio = fields.StringField()
     fine = fields.StringField()
+    sede = fields.StringField()
     anno = fields.IntField()
     doy = fields.IntField()
     ore = fields.FloatField()
@@ -29,8 +55,12 @@ class Corso(Document):
     ordine = fields.ReferenceField('OrdineProduzione')
     data_inizio = fields.DateTimeField()
     data_fine = fields.DateTimeField()
-    durata = fields.IntField(default=8)
+    durata = fields.IntField(default=8, min_value=1)
     note = fields.StringField(max_length=1000)
+    partecipanti = fields.IntField(default=16, min_value=1)
+    docente = fields.StringField()
+    cartella_corso = fields.BooleanField(default=False)
+    stato = fields.IntField(min_value=0, default=CartelleCorsoTask.STATO_ATTESA_LAVORAZIONE)
 
     lezioni = fields.ListField(EmbeddedDocumentField(Lezione))
 
@@ -45,9 +75,17 @@ class Corso(Document):
         """
             Validazione del modello nel suo complesso.
         """
+        print("Inizio la validazione")
+        
         # La durata del corso deve essere di almeno un'ora.
-        if self.durata <= 0:
-            raise ValidationError({'durata': 'La durata del corso deve essere positiva.'})
+        """
+        if self.durata < 2:
+            raise ValidationError(field_name='Adurata', message="Must be louder!")
+            #message='La durata del corso deve essere positiva.')
+        self.errors = kwargs.get('errors', {})
+        self.field_name = kwargs.get('field_name')
+        self.message = message
+        """
 
         # La data di inizio deve essere maggiore o uguale a quella di fine.
         #if self.data_fine < self.data_inizio:
