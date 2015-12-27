@@ -3,7 +3,7 @@
     Corsi
 """
 # from django.db import models
-from mongoengine import fields, Document, EmbeddedDocument, EmbeddedDocumentField, ValidationError
+from mongoengine import fields, Document, EmbeddedDocument, EmbeddedDocumentField
 from tasker.models import Task
 
 
