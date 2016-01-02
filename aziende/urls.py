@@ -1,9 +1,10 @@
 # coding=utf-8
-__author__ = 'Sig'
-from django.conf.urls import patterns, url
+
+from django.conf.urls import url
 from .views import get_listaziende
+__author__ = 'Sig'
 
 
-urlpatterns = patterns('',
-                       url(r'^api/get_listaziende$', get_listaziende, name='get_listaziende'),
-                       )
+urlpatterns = [
+    url(r'^api/get_listaziende$', get_listaziende, name='get_listaziende'),
+]

@@ -25,21 +25,6 @@ import json
 from mongoengine import *
 connect('test')
 
-def cacca(request):
-    """
-    poll = Poll.objects(question__contains="What").first()
-    choice = Choice(choice_text="I'm at DjangoCon.fi", votes=23)
-    poll.choices()
-    poll.save()
-    """
-    poll = Poll.objects(question__contains="merda").first()
-    choice = Choice(choice_text="Pippo e pluto", votes=23)
-    poll.choices.append(choice)
-    poll.save()
-    print(poll)
-
-    return HttpResponse(request, "Fatto")
-
 
 # region INIZIATIVE
 @login_required()

@@ -7,8 +7,7 @@ from .views import about, index, user_login, user_logout
 from django.contrib.auth import views as auth_views
 
 
-urlpatterns = patterns(
-    '',
+urlpatterns = [
     # Examples:
     # url(r'^$', 'si.views.home', name='home'),
     # url(r'^blog/', include('blog.urls')),
@@ -24,12 +23,12 @@ urlpatterns = patterns(
     url(r'^si/corsi/', include('corsi.urls', namespace="corsi", app_name="corsi")),
     url(r'^si/segnalazioni/', include('segnalazioni.urls', namespace="segnalazioni", app_name="segnalazioni")),
     url(r'^si/op/', include('op.urls', namespace="op", app_name="op")),
-    url(r'^si/aziende/', include('aziende.urls', namespace="aziende", app_name="aziende")),
-    ) + static(settings.SIFILEDATA_URL, document_root=settings.SIFILEDATA_ROOT)
+    url(r'^si/aziende/', include('aziende.urls', namespace="aziende", app_name="aziende"))
+] + static(settings.SIFILEDATA_URL, document_root=settings.SIFILEDATA_ROOT)
 
 
 if settings.DEBUG:
     import debug_toolbar
-    urlpatterns += patterns('',
-                            url(r'^__debug__/', include(debug_toolbar.urls)),
-                            )
+    urlpatterns += [
+        url(r'^__debug__/', include(debug_toolbar.urls)),
+    ]

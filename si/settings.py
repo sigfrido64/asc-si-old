@@ -21,11 +21,6 @@ from mongoengine import connect
 
 BASE_DIR = os.path.dirname(os.path.dirname(__file__))
 
-# Include BOOTSTRAP3_FOLDER in path
-BOOTSTRAP3_FOLDER = os.path.abspath(os.path.join(BASE_DIR, '..', 'bootstrap3'))
-if BOOTSTRAP3_FOLDER not in sys.path:
-    sys.path.insert(0, BOOTSTRAP3_FOLDER)
-
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/dev/howto/deployment/checklist/
 
@@ -35,14 +30,31 @@ SECRET_KEY = '1$t)$+-ey%m0!#f!=2&pj&1^-1dfca0t4u(erl0)u54n#1-3#d'
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-TEMPLATE_DEBUG = True
 TEMPLATE_PATH = os.path.join(BASE_DIR, 'templates')
 
-TEMPLATE_DIRS = [
-    # Put strings here, like "/home/html/django_templates" or "C:/www/django/templates".
-    # Always use forward slashes, even on Windows.
-    # Don't forget to use absolute paths, not relative paths.
-    TEMPLATE_PATH,
+TEMPLATES = [
+    {
+        'BACKEND': 'django.template.backends.django.DjangoTemplates',
+        'DIRS': [
+            # insert your TEMPLATE_DIRS here
+            TEMPLATE_PATH,
+        ],
+        'APP_DIRS': True,
+        'OPTIONS': {
+            'context_processors': [
+                # Insert your TEMPLATE_CONTEXT_PROCESSORS here or use this
+                # list if you haven't customized them:
+                'django.contrib.auth.context_processors.auth',
+                'django.template.context_processors.debug',
+                'django.template.context_processors.i18n',
+                'django.template.context_processors.media',
+                'django.template.context_processors.static',
+                'django.template.context_processors.tz',
+                'django.contrib.messages.context_processors.messages',
+            ],
+            'debug': True,
+        },
+    },
 ]
 
 ALLOWED_HOSTS = []
@@ -146,13 +158,5 @@ MEDIA_URL = 'uploads/'
 # E qui memorizzo i dati del mio filesystem.
 SIFILEDATA_ROOT = os.path.join(BASE_DIR, 'data')
 SIFILEDATA_URL = '/data/'
-
-# Settings for django-bootstrap3
-BOOTSTRAP3 = {
-    'set_required': False,
-    'error_css_class': 'bootstrap3-error',
-    'required_css_class': 'bootstrap3-required',
-    'javascript_in_head': True,
-}
 
 LOGIN_REDIRECT_URL = 'index'
