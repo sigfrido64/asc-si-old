@@ -1,9 +1,19 @@
 *** INSTALLAZIONE DEI VARI PACCHETTI DI BASE ***
+*** A partire da Django 1.9 non si lavora piÃ¹ con Python 3.2 per cui meglio scaricare i sorgenti e compilare il tutto.
 
-apt-get install python3 ed ok sulle dipendenze.
-apt-get install python3-pip ed ok sulle dipendenze
-apt-get ibstall git ed ok sulle dipendenze
+apt-get install git ed ok sulle dipendenze
+apt-get install libsqlite3-dev  -> Serve per poi compilare Python con sqlite fino a che lo userÃ²
 
+Scarico quindi il srogente in tarball da : https://www.python.org/downloads/source/
+Nel mio caso a Gennio 2016
+
+root@debian #) cd /root
+root@debian #) wget https://www.python.org/ftp/python/3.5.1/Python-3.5.1.tgz
+root@debian #)tar -xvzf Python-3.5.1.tgz
+root@debian #)cd Python-3.5.1.tgz
+root-Python-3.5.1@debian #)./configure --enable-loadable-sqlite-extensions          -> Fondamentale per avere il supporto a sqlite3 fino a che lo userÃ².
+root-Python-3.5.1@debian #)make
+root-Python-3.5.1@debian #)make install
 
 
 
@@ -15,13 +25,13 @@ Il file lo chiamo, per esempio :  mongodb-org-3.2.list
 nel file metto : 
 deb http://repo.mongodb.org/apt/debian wheezy/mongodb-org/3.2 main
 
-poi devo importare la chiave GPG. Attenzione al :80 dopo l'indirizzo perchè mi serve per garantire che la richiesta venga fatta sulla porta
+poi devo importare la chiave GPG. Attenzione al :80 dopo l'indirizzo perchï¿½ mi serve per garantire che la richiesta venga fatta sulla porta
 80 e non su quella standard 11371 che potrebbe essere bloccata dal firewall.
 Scrivo quindi :
 
 root@debian #) apt-key adv --keyserver hkp://keyserver.ubuntu.com:80 --recv EA312927
 
-A questo punto posso installare mongodb con (occhio che mongodb-org è un metapacchetto che installa tutto)
+A questo punto posso installare mongodb con (occhio che mongodb-org ï¿½ un metapacchetto che installa tutto)
 
 root@debian #) apt-get install mongodb-org
 
@@ -44,7 +54,7 @@ root@debian #(si)) service nginx restart
 
 *** INSTALLAZIONE DI SI ***
 
-Creo la cartella /var/www in cui mettere i files di nginx e do permessi di scrittura illimitati a www-data che è l'utente di
+Creo la cartella /var/www in cui mettere i files di nginx e do permessi di scrittura illimitati a www-data che ï¿½ l'utente di
 default per far girare il web-server.
 
 root@debian #) mkdir /var/www
@@ -53,7 +63,7 @@ root@debian #) chown -R www-data:www-data /var/www
 
 
 Creo quindi una cartella [si] per metterci dentro i files e tutto il necessario.
-Clono il repository nella cartella si, lo faccio prima perchè altrimenti dopo mi dice che la cartella esiste già e non lo fa.
+Clono il repository nella cartella si, lo faccio prima perchï¿½ altrimenti dopo mi dice che la cartella esiste giï¿½ e non lo fa.
 
 root@debian #) git clone https://github.com/sigfrido64/asc-si.git si
 
@@ -61,13 +71,13 @@ root@debian #) git clone https://github.com/sigfrido64/asc-si.git si
 A questo punto installo Virtualenv. Attenzione all'appendice se lavori sotto windows e comunque se sulla macchina
 ci sono due versioni di python diverse in funzione.
 
-root@debian #) pip install virtualenv (che userà la versione 3 di python)
+root@debian #) pip install virtualenv (che userÃ  la versione 3 di python - da verificare con nuova versione compilata)
 
 creo il virtualenv 
 
 (mkdir non serve se ho clonato il repository da prima)
 
-root@debian #) virtualenv si
+root@debian #) /usr/local/bin/python3.5 -m venv si
 
 lo attivo
 
@@ -99,10 +109,10 @@ root@debian #(si)) service gunicorn start
 
 Aggiornamento del repository mediante git
 
-per allineare il mio repository con quello remoto uso : git update remote
+per allineare il mio repository con quello remoto uso : git remote update
 per estrarre il remoto e mettere in linea il tutto uso : git merge origin/master
 
-A questo punto la mia copia locale è uguale a quella remota.
+A questo punto la mia copia locale ï¿½ uguale a quella remota.
 
 
 Abilitazione del meccanismo di autorizzazione.
@@ -118,7 +128,7 @@ db.createUser(
 )
 
 
-Poi creo un utente per il database Asc su cui andrò ad operare con :
+Poi creo un utente per il database Asc su cui andrï¿½ ad operare con :
 
 use asc
 db.createUser(
@@ -138,7 +148,7 @@ REM Non ricordo da dove arriva !!! c:\>py -3.4 -m c:\Python34 nome_virtulenv
 Questa invece va !
 
 C:\>virtualenv -p c:\Python27\python.exe nome_virtualenv
-questo userà la versione dell'interprete che ho indicato.
+questo userï¿½ la versione dell'interprete che ho indicato.
 
 
 Per installare bene mtools in un virtualenv di PYTHON27 (funziona solo con questo) metti in coda ad activate.bat
@@ -147,4 +157,14 @@ Il file activate.bat lo trovi in scripts
 set "TCL_LIBRARY=C:\Python27\tcl\tcl8.5"
 set "TK_LIBRARY=C:\Python27\tcl\tk8.5"
 
+
+
+
+
+********************************************************************************************************
+SUPERATO
+
+
+apt-get install python3 ed ok sulle dipendenze.
+apt-get install python3-pip ed ok sulle dipendenze
 
