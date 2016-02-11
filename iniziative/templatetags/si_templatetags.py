@@ -1,11 +1,12 @@
 # coding=utf-8
 from django import template
+from django.utils.safestring import mark_safe
 register = template.Library()
 
 
 @register.simple_tag()
 def si_dc_dialog():
-    return """
+    tag = """
     <script>
     $(function() {
         $(".remove_link").click(function(e) {
@@ -48,8 +49,8 @@ def si_dc_dialog():
     <div id="dialog" class="easyui-dialog" title="Conferma Cancellazione" style="width:400px;height:200px;padding:10px" data-options="iconCls:'icon-no',modal:true,closed:true">
         The dialog content.
     </div>
-
 """
+    return mark_safe(tag)
 
 
 # Vecchia versione
