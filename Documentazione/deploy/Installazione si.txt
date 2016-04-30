@@ -68,6 +68,9 @@ Clono il repository nella cartella si, lo faccio prima perch� altrimenti dopo 
 root@debian #) git clone https://github.com/sigfrido64/asc-si.git si
 
 
+
+*** INSTALLAZIONE DI VIRTUALENV ***
+
 A questo punto installo Virtualenv. Attenzione all'appendice se lavori sotto windows e comunque se sulla macchina
 ci sono due versioni di python diverse in funzione.
 

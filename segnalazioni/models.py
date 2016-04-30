@@ -14,7 +14,6 @@ class Persone(EmbeddedDocument):
         return str(self.pax) + ' - ' + " stato : " + str(self.stato)
 
 
-
 class Log(EmbeddedDocument):
     """
     Registrazione di un contatto con il cliente.

@@ -1,0 +1,100 @@
+{% extends 'basejqx.html' %}
+{% load staticfiles %}
+
+{% block title %}Lista Aziende{% endblock %}
+
+{% block script_block %}
+ <script type="text/javascript">
+        $(document).ready(function () {
+            var filtro = $("#filtro");
+            filtro.jqxButton();
+            filtro.on("click", function () {
+
+                $("#jqxgrid").jqxGrid('updatebounddata');
+            });
+            var url = "/si/aziende/api/2/";
+            var grid = $("#jqxgrid");
+            // prepare the data
+            var source =
+            {
+                datatype: "json",
+                datafields: [
+                    { name: 'ragione_sociale' },
+                    { name: 'sedi' },
+                    { name: 'contatti' },
+                    { name: 'pk' }
+                ],
+                id: 'pk',
+                url: url,
+                root: 'data',
+                data: {
+
+                    style: "full",
+                    maxRows: 50
+                }
+            };
+            var dataAdapter = new $.jqx.dataAdapter(source, {
+                formatData: function (data) {
+                    $.extend(data, {
+                        filtroAzienda: $('#filtroAzienda').val(),
+                        style: "full",
+                        maxRows: 50
+                    });
+                return data;
+            }
+    });
+            grid.jqxGrid({
+                width: "100%",
+                source: dataAdapter,
+                columnsresize: true,
+                editable: false,
+                autoheight: true,
+                autorowheight: true,
+                pageable: true,
+                pagesize: 20,
+                filterable: true,
+                sortable: true,
+                autoshowfiltericon: true,
+                columns: [
+                    { text: 'Ragione Sociale', dataField: 'ragione_sociale', width: "40%" },
+                    { text: 'Sedi', dataField: 'sedi', width: "30%" },
+                    { text: 'Contatti', dataField: 'contatti', width: "30%" }
+                ]
+            });
+            grid.on("celldoubleclick", function (event) {
+                var args = event.args;
+                var rowBoundIndex = args.rowindex;
+                var colIndex = args.columnindex;
+                var value = $('#jqxgrid').jqxGrid('getcellvalue', rowBoundIndex, 'pk');
+                var url_mask = "{% url 'aziende:edit' pk=12345 %}".replace(/12345/, value.toString());
+                alert (colIndex);
+                popupCenter(url_mask, '80', '80');
+            });
+        });
+    </script>
+{% endblock %}
+
+
+{% block body_block %}
+
+<br>
+<div>
+    Filtro Ragione Sociale : <input type="text" id="filtroAzienda"/><input type="button" value="Go" id='filtro' /> <br><br>
+</div>
+
+<div id="jqxgrid"></div>
+
+<div style="margin-left: 30px; float: left;">
+    <div>
+        <input id="addrowbutton" type="button" value="Add New Row" />
+    </div>
+    <div style="margin-top: 10px;">
+        <input id="deleterowbutton" type="button" value="Delete Selected Row" />
+    </div>
+    <div style="margin-top: 10px;">
+        <input id="updaterowbutton" type="button" value="Update Selected Row" />
+    </div>
+</div>
+
+
+{% endblock %}

@@ -4,7 +4,7 @@ from django.shortcuts import render
 from django.contrib.auth.decorators import login_required
 from .forms import OrdineProduzioneForm
 from .models import OrdineProduzione
-from  sigutil import UserPermissions, get_obj_or_404
+from sigutil import UserPermissions, get_obj_or_404
 from django.http import HttpResponseRedirect, Http404, HttpResponse
 from django.core.urlresolvers import reverse
 import json
@@ -60,6 +60,7 @@ def op_add(request):
     # Visualizza il template.
     return render(request, 'op/op_add.html', context_dict)
 """
+
 
 @login_required()
 def op_edit(request, pk=None):

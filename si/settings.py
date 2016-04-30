@@ -29,6 +29,7 @@ SECRET_KEY = '1$t)$+-ey%m0!#f!=2&pj&1^-1dfca0t4u(erl0)u54n#1-3#d'
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
+DEBUG_PRINT = True
 
 TEMPLATE_PATH = os.path.join(BASE_DIR, 'templates')
 
@@ -96,9 +97,9 @@ ROOT_URLCONF = 'si.urls'
 WSGI_APPLICATION = 'si.wsgi.application'
 
 
-
 # Connessione a MongoDB usando MongoEngine
-connect(db='asc', username='ascUser', password='123')
+# Da rivedere con autenticazione
+connect(db='asc')
 
 # Database
 # https://docs.djangoproject.com/en/dev/ref/settings/#databases
@@ -158,4 +159,5 @@ MEDIA_URL = 'uploads/'
 SIFILEDATA_ROOT = os.path.join(BASE_DIR, 'data')
 SIFILEDATA_URL = '/data/'
 
-LOGIN_REDIRECT_URL = 'index'
+LOGIN_REDIRECT_URL = '/si/'
+LOGIN_URL = "/si/login/"

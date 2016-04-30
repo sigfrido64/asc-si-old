@@ -1,9 +1,9 @@
 # coding=utf-8
 from django.conf import settings
-from django.conf.urls import patterns, include, url
+from django.conf.urls import include, url
 from django.contrib import admin
 from django.conf.urls.static import static
-from .views import about, index, user_login, user_logout
+from .views import index
 from django.contrib.auth import views as auth_views
 
 
@@ -12,11 +12,10 @@ urlpatterns = [
     # url(r'^$', 'si.views.home', name='home'),
     # url(r'^blog/', include('blog.urls')),
     # url(r'^', include('docusign.urls')),
-    url(r'^accounts/login/$', auth_views.login),
     url(r'^si/$', index, name="index"),
-    url(r'^login/$', user_login, name='login'),
-    url(r'^logout/$', user_logout, name='logout'),
-    url(r'^about/$', about, name='about'),
+    url(r'^si/login/$', auth_views.login, name='login'),
+    url(r'^si/logout/$', auth_views.logout_then_login, name='logout'),
+    url(r'^si/passchange/$', auth_views.password_change, {'post_change_redirect': '/si/'}),
     url(r'^admin/', include(admin.site.urls)),
     url(r'^si/iniziative/', include('iniziative.urls', namespace="iniziative", app_name="iniziative")),
     url(r'^si/fs/', include('sifilesmanager.urls', namespace="fs", app_name="fs")),

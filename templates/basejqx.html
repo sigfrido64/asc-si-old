@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+{% load staticfiles %}
+
+<html lang="it" xmlns="http://www.w3.org/1999/html">
+
+<head>
+    <!-- The above 3 meta tags *must* come first in the head; any other head content must come *after* these tags -->
+    <meta charset="UTF-8"/>
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <!-- Titolo della pagina che viene sostituito nell'implementazione -->
+    <title>
+        SI - {% block title %} Titolo {% endblock %}
+    </title>
+
+    <!-- Mie informazioni sul sistema. -->
+    <meta name="description" content="Sistema Informatico Scuola Camerana">
+    <meta name="author" content="Pilone Ing. Sigfrido">
+
+    <!-- Iconcina del sistema -->
+    <link rel="shortcut icon" type="image/x-icon" href="{% static "images/favicon.ico" %}" >
+    <link rel="icon" type="image/x-icon" href="{% static "images/favicon.ico" %}" >
+
+    <!-- JQwidgets Specifici -->
+{% block js %}
+    <link rel="stylesheet" href="{% static "jqw/jqwidgets/styles/jqx.base.css" %}" type="text/css" />
+    <link rel="stylesheet" href="{% static "jqw/jqwidgets/styles/jqx.darkblue.css" %}" type="text/css" />
+    <script type="text/javascript" src="{% static "jqw/scripts/jquery-1.11.1.min.js" %}"></script>
+    <script type="text/javascript" src="{% static "jqw/jqwidgets/jqxcore.js" %}"></script>
+    <script type="text/javascript" src="{% static "jqw/jqwidgets/jqx-all.js" %}"></script>
+
+    <!-- Icone Gliph Bootstrap -->
+    <link href="{% static "bootstrap/css/bootstrap.min.css" %}" rel="stylesheet" />
+
+    <script type="text/javascript">
+        $.jqx.theme = 'darkblue';
+
+    function mostraErrore(elemento, messaggio) {
+        elemento.jqxTooltip({ content: messaggio, position: 'top', autoHide: false, trigger: "none", closeOnClick: false });
+        elemento.jqxTooltip("open");
+    };
+
+    function popupCenter(url) {
+        var left = ($(window).width() / 2) - (900 / 2);
+        var top = ($(window).height() / 2) - (600 / 2);
+        window.open (url, "popup", "width=900 height=600, top=" + top + ", left=" + left);
+    };
+
+    $(document).ready(function () {
+        // Create a jqxMenu
+        var menu = jQuery("#jqxMenu");
+        menu.jqxMenu({width: '100%', height: '30px'});
+        menu.css('visibility', 'visible');
+    });
+    </script>
+{% endblock %}
+
+</head>
+
+<body>
+    <!-- Toolbar -->
+    <div id='jqxWidget' style='height: 35px;'>
+            <div id='jqxMenu' style='visibility: hidden;'>
+                <ul>
+                    <li><a href="{% url 'index' %}"><i class="glyphicon glyphicon-home"></i></a></li>
+                    <li id="iniziative"> <a href="{% url 'iniziative:index' %}">Iniziative (Obsoleto)</a> </li>
+                    {% if 'ordini' in perm.permissions %}
+                        <li id="ordini"> <a href="{% url 'op:index' %}">Ordini</a> </li>
+                    {% endif %}
+
+                    {% if 'aziende' in perm.permissions %}
+                        <li id="aziende"> <a href="{% url 'aziende:index' %}">Aziende</a> </li>
+                    {% endif %}
+
+                    {% if 'corsi' in perm.permissions %}
+                        <li id="corsi"><a href="{% url 'corsi:index' %}">Corsi</a></li>
+                    {% endif %}
+
+                    <li><a href="{% url 'logout' %}"><i class="glyphicon glyphicon-log-out"></i></a></li>
+                </ul>
+            </div>
+    </div>
+
+    {% block script_block %} Script specifici {% endblock %}
+
+
+</div>
+    <!-- Area di Testo -->
+    <div class="container-fluid">
+
+        {% block body_block %} Area di testo {% endblock %}
+
+    </div><!-- Container -->
+</body>
+</html>

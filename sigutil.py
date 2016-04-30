@@ -3,9 +3,13 @@ from django.http import Http404
 from mongoengine import fields, Document
 from tasker.models import Heartbeats
 import datetime
+import re
+from django.conf import settings
 
 
 class UserPermissions(Document):
+    AZIENDE_ALL = 'aziende'
+
     user = fields.StringField(primary_key=True)
     permissions = fields.ListField(fields.StringField(max_length=10))
 
@@ -32,7 +36,7 @@ def heartbeat(processo, timeout):
     hb.save()
 
 
-def stampadebug(messaggio, debug_flag):
+def stampadebug(messaggio):
         """
         Stampa un messaggio di debug.
 
@@ -41,5 +45,58 @@ def stampadebug(messaggio, debug_flag):
                            stampa di debug per il singolo modulo.
         :return: None
         """
-        if debug_flag:
+        if settings.DEBUG_PRINT:
             print(messaggio)
+
+
+def concatena(*args):
+    """
+    Concatena un numero arbitratrio di stringhe anche se sono nulle e potrebbero portare ad errori di run-time
+    :param args:
+    :return:
+    """
+    linea = ''
+    for l in args:
+        linea += str(l if l else '')
+    return linea
+
+
+def valid_email(email):
+    """
+    Verifica se una e-mail può essere considerata formalmente valida.
+
+    :param email: La mail da controllare.
+    :return: True se valida, False altrimenti.
+    """
+    email_regex = re.compile(
+        # dot-atom
+        r"(^[-!#$%&'*+/=?^_`{}|~0-9A-Z]+(\.[-!#$%&'*+/=?^_`{}|~0-9A-Z]+)*"
+        # quoted-string
+        r'|^"([\001-\010\013\014\016-\037!#-\[\]-\177]|\\[\001-011\013\014\016-\177])*"'
+        # domain (max length of an ICAAN TLD is 22 characters)
+        r')@(?:[A-Z0-9](?:[A-Z0-9-]{0,61}[A-Z0-9])?\.)+(?:[A-Z]{2,6}|[A-Z0-9-]{2,}(?<!-))$', re.IGNORECASE
+    )
+
+    return email_regex.match(email)
+
+
+def hashsig(linea):
+    return re.sub('[^0-9a-zA-Z]+', '', linea)
+
+
+"""
+PROFILAZIONE
+    # Includes
+    import cProfile, pstats, io
+
+    # Inizio Profilazione
+    pr = cProfile.Profile()
+    pr.enable()
+
+    # Fine Profilazione e stampa risultati
+    pr.disable()
+    f = open("profile.txt", "w", encoding="utf-8")
+    sortby = 'cumulative'
+    ps = pstats.Stats(pr, stream=f).sort_stats(sortby)
+    ps.print_stats()
+"""

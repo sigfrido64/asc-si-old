@@ -1,19 +1,95 @@
-{% extends 'base.html' %}
+{% extends 'basejqx_nolayout.html' %}
+{% load staticfiles %}
 
 {% block title %}Login{% endblock %}
 
-{% block header %}Accedi{% endblock %}
+{% block js %}
+    {{ block.super }} {# includes previous content in block #}
+    {# Javascript specifici #}
+    <script type="text/javascript">
+    $(document).ready(function () {
+        // Creo la finestra con eventuale messaggio di errore.
+        var finestra = $("#jqxwindow");
+        finestra.jqxWindow({
+            width: 250,
+            height: 180,
+            isModal: true,
+            resizable: false,
+            showCloseButton: false,
+            draggable: false,
+        });
+        {% if form.errors %}
+            mostraErrore(finestra, 'Nome utente e/o password errati !');
+        {% endif %}
+
+        // Creo il resto dei controlli.
+        $("#txtName").jqxInput();
+        $("#txtPassword").jqxPasswordInput();
+        $("#submit").jqxButton({});
+    });
+    </script>
+    <style>
+        .control {
+            height: 500px;
+        }
+
+        .ejinputtext {
+            height: 25px;
+            width: 100%;
+            margin-bottom: 10px;
+        }
+
+        .row .cols-sample-area {
+            padding: 0px;
+            margin-bottom: 50px;
+            position: relative;
+        }
+
+        .top {
+            margin-top: 5px;
+        }
+
+        .reqired {
+            margin: 0 0 3px 0;
+            color: red;
+            display: inline-block;
+        }
+    </style>
+
+{% endblock %}
+
 
 {% block body_block %}
 
-<div class="row col-md-4">
-    <form class="form-signin" role="form" method="post" action=".">
-        {% csrf_token %}
-
-        <input class="form-control" placeholder="Username" id="id_username" maxlength="254" name="username" type="text" required autofocus=""/>
-        <input type="password" class="form-control" placeholder="Password" id="id_password" name="password" type="password" required />
-
-        <button size="small" class="btn btn-lg btn-primary btn-block" type="submit" value="Submit">Sign in</button>
-    </form>
+<div id='jqxwindow'>
+	<div>Login</div>
+	<div>
+        <form method="post" action=".">
+            {% csrf_token %}
+            <table>
+                <tr>
+                    <td>
+                        Username <div class="reqired">*</div>
+                        <input name="username" id="txtName" required /><br>
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        Password <div class="reqired">*</div>
+                        <input type="password" name="password" id="txtPassword" required /><br>
+                    </td>
+                </tr>
+            </table>
+            <div align="center">
+                <br>
+                <input type="submit" id="submit" value="LOGIN" />
+            </div>
+        </form>
+    </div>
 </div>
+
 {% endblock %}
+
+
+
+
