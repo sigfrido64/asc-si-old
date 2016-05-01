@@ -1,7 +1,7 @@
 # coding=utf-8
 from django.conf.urls import url
-from .views import index, get_listanazioni, add_edit, get_listaziende, popola
-from .views import importanazioni, importaprovincie, importaaziende, importacontatti, api_refreshelper
+from .views import index, get_listanazioni, add_edit, get_listaziende
+from .views import importanazioni, importaprovincie, importaaziende, importacontatti
 __author__ = 'Sig'
 
 urlpatterns = [
@@ -11,11 +11,9 @@ urlpatterns = [
     # Sezione della API
     url(r'^api/get_listanazioni/$', get_listanazioni, name='get_listanazioni'),
     url(r'^api/2/$', get_listaziende),
-    url(r'^api/3/$', popola),
     # Importazioni da Assocam
     url(r'^importa/nazioni/$', importanazioni, name='_i_nazioni'),
     url(r'^importa/provincie/$', importaprovincie, name='_i_provincie'),
     url(r'^importa/aziende/$', importaaziende, name='_i_aziende'),
     url(r'^importa/contatti/$', importacontatti, name='_i_contatti'),
-    url(r'^importa/rh/$', api_refreshelper, name='_i_refresh_helper'),
 ]

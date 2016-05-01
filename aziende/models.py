@@ -74,6 +74,8 @@ class Azienda(Document):
     sito_web = StringField(max_length=50)
     note = StringField()
     hash = StringField(max_length=100)
+    lista_sedi_html = StringField(max_length=1000)
+    lista_contatti_html = StringField(max_length=2000)
     dts_aggiornamento = DateTimeField()
     dts_creazione = DateTimeField()
     # Definizione degli indici
@@ -87,10 +89,39 @@ class Azienda(Document):
         return self.ragione_sociale
 
     def save(self, *args, **kwargs):
+        # Compone l'Hash dell'azienda.
+        self.hash = hashsig(self.ragione_sociale)
+
+        # Aggiorna i timestamps.
         if not self.dts_creazione:
             self.dts_creazione = datetime.datetime.now()
         self.dts_aggiornamento = datetime.datetime.now()
         return super(Azienda, self).save(*args, **kwargs)
+
+    def aggiornacorrelazioni(self):
+        """
+        Aggiorna gli elementi delle correlazioni.
+        """
+        # Compone la lista delle sedi.
+        sedi = Sede.objects(azienda=self)
+        lista_sedi = ''
+        for sede in sedi:
+            if lista_sedi:
+                lista_sedi += '<br>'
+            lista_sedi += sede.indirizzo_verboso
+        self.lista_sedi_html = lista_sedi
+
+        # Compone la lista dei contatti.
+        contatti = Contatto.objects(azienda=self)
+        lista_contatti = ''
+        for conta in contatti:
+            if lista_contatti:
+                lista_contatti += '<br>'
+            lista_contatti += conta.contatto_verboso
+        self.lista_contatti_html = lista_contatti
+
+        # Infine salva l'istanza.
+        self.save()
 
     class Meta:
         managed = False
@@ -113,7 +144,7 @@ class Sede(Document):
     provincia = StringField(max_length=2)
     cap = StringField(max_length=5)
     nazione = StringField(max_length=50)
-    indirizzo_verboso = StringField(max_length=100)
+    indirizzo_verboso = StringField(max_length=200)
     tel1 = StringField(max_length=30)
     tel2 = StringField(max_length=30)
     tel3 = StringField(max_length=30)
@@ -147,9 +178,12 @@ class Sede(Document):
             dummy = concatena(dummy, " - ", self.nazione)
         self.indirizzo_verboso = dummy
 
+        # Aggiorna i Timestamps.
         if not self.dts_creazione:
             self.dts_creazione = datetime.datetime.now()
         self.dts_aggiornamento = datetime.datetime.now()
+
+        # Chiama il Super !
         return super(Sede, self).save(*args, **kwargs)
 
     class Meta:
@@ -172,6 +206,7 @@ class Contatto(Document):
     nome = StringField(max_length=50)
     cognome = StringField(max_length=50)
     posizione = StringField(max_length=50)
+    contatto_verboso = StringField(max_length=200)
     tel1 = StringField(max_length=30)
     tel2 = StringField(max_length=30)
     tel3 = StringField(max_length=30)
@@ -186,6 +221,7 @@ class Contatto(Document):
     note = StringField()
     attivo = BooleanField(default=True)
     promozione_ok = BooleanField(default=True)
+    hash = StringField(max_length=100)
     # Timestamp di creazione e di aggiornamento.
     dts_aggiornamento = DateTimeField()
     dts_creazione = DateTimeField()
@@ -200,88 +236,22 @@ class Contatto(Document):
         return concatena(self.titolo, " ", self.cognome, " ", self.nome)
 
     def save(self, *args, **kwargs):
+        # Calcola l'hash del contatto
+        self.hash = hashsig(concatena(self.cognome, self.nome))
+
+        # Compone il contatto verboso per il seguito.
+        self.contatto_verboso = concatena(self.titolo, ' ', self.cognome, ' ', self.nome)
+
+        # Aggiorna i Timestamps.
         if not self.dts_creazione:
             self.dts_creazione = datetime.datetime.now()
         self.dts_aggiornamento = datetime.datetime.now()
+
+        # Chiama il super !
         return super(Contatto, self).save(*args, **kwargs)
 
     class Meta:
         managed = False
-
-
-class ContattoHelper(EmbeddedDocument):
-    """
-    Contatto all'interno di un'azienda.
-    """
-    id = ObjectIdField(required=True)
-    # Riferimento alla vecchia matricola Assocam
-    id_asc_contatto = LongField()
-    # Campi specifici del documento.
-    contatto = StringField(max_length=200)
-
-    class Meta:
-        managed = False
-
-
-class SedeHelper(EmbeddedDocument):
-    """
-    Sede di un'Azienda per l'helper delle ricerche.
-    """
-    id = ObjectIdField(required=True)
-    # Campi specifici della singola sede.
-    indirizzo = StringField(max_length=200)
-    contatti = EmbeddedDocumentListField(ContattoHelper)
-
-    class Meta:
-        managed = False
-
-
-class AziendaHelper(Document):
-    """
-    Helper Class per sveltire le interrogazioni.
-    """
-    id = ObjectIdField(required=True, primary_key=True)
-    ragione_sociale = StringField(max_length=100, required=True)
-    descrizione = StringField(max_length=200)
-    # Vecchia chiave primaria di Assocam.
-    id_asc_azienda = LongField()
-    # Lista delle sedi.
-    sedi = EmbeddedDocumentListField(SedeHelper)
-    sedi_html = StringField(max_length=1000)
-    contatti_html = StringField(max_length=1000)
-    hash_azienda = StringField(max_length=100, required=True)
-    meta = {'collection': 'aziende_helper'}
-
-    def __str__(self):
-        return self.ragione_sociale
-
-    def save(self, *args, **kwargs):
-        # Salva la lista delle sedi con il <br> in html.
-        lista_sedi = ''
-        for sede in self.sedi:
-            if lista_sedi:
-                lista_sedi += '<br>'
-            lista_sedi += sede.indirizzo
-        self.sedi_html = lista_sedi
-
-        # Salva la lista dei contatti in il <br> in html.
-        lista_contatti = ''
-        for sede in self.sedi:
-            for contatto in sede.contatti:
-                if lista_contatti:
-                    lista_contatti += '<br>'
-                lista_contatti += contatto.contatto
-        self.contatti_html = lista_contatti
-
-        # Salvo i vari hash per il seguito.
-        self.hash_azienda = hashsig(self.ragione_sociale).upper()
-
-        # Chiudo il cerchio con la chiamata al super !
-        return super(AziendaHelper, self).save(*args, **kwargs)
-
-    class Meta:
-        managed = False
-
 # endregion
 
 
@@ -356,72 +326,4 @@ class ContattoSQL (models.Model):
         managed = False
         db_table = 'asc_contatti'
 
-
 # endregion
-"""
-CREATE TABLE [dbo].[Tabella Membri Aziende](
-	[Id Contatto] [int] IDENTITY(1,1) NOT NULL,
-	[Id Azienda] [int] NOT NULL,
-	[Titolo] [nvarchar](50) NOT NULL,
-	[Nome] [nvarchar](50) NOT NULL,
-	[Cognome] [nvarchar](50) NOT NULL,
-	[Posizione] [nvarchar](50) NOT NULL,
-	[Tel1] [nvarchar](30) NULL,
-	[Tel2] [nvarchar](30) NULL,
-	[Tel3] [nvarchar](30) NULL,
-	[Tel4] [nvarchar](30) NULL,
-	[DTel1] [nvarchar](20) NULL,
-	[DTel2] [nvarchar](20) NULL,
-	[DTel3] [nvarchar](20) NULL,
-	[DTel4] [nvarchar](20) NULL,
-	[Email1] [nvarchar](50) NULL,
-	[Email2] [nvarchar](50) NULL,
-	[Data Nascita] [datetime] NULL,
-	[Note] [ntext] NULL,
-	[Flag Saldatura] [bit] NOT NULL,
-	[Flag Informatica] [bit] NOT NULL,
-	[Flag Sicurezza] [bit] NOT NULL,
-	[Flag Qualità] [bit] NOT NULL,
-	[Flag Meccanica] [bit] NOT NULL,
-	[Flag Automazione] [bit] NOT NULL,
-	[Flag Plasturgia] [bit] NOT NULL,
-	[Flag Altro] [bit] NOT NULL,
-	[TsAggiornamento] [datetime] NULL,
- CONSTRAINT [PK_Tabella Membri Aziende] PRIMARY KEY CLUSTERED
-
- CREATE TABLE [dbo].[Anagrafica Aziende](
-	[Id Azienda] [int] IDENTITY(1,1) NOT NULL,
-	[Ragione Sociale] [nvarchar](100) NOT NULL,
-	[Descrizione] [nvarchar](200) NULL,
-	[Indirizzo] [nvarchar](50) NOT NULL,
-	[Città] [nvarchar](50) NOT NULL,
-	[Provincia] [nvarchar](2) NULL,
-	[CAP] [nvarchar](5) NULL,
-	[PIVA] [nvarchar](12) NULL,
-	[CF] [nvarchar](16) NULL,
-	[Tel1] [nvarchar](30) NULL,
-	[Tel2] [nvarchar](30) NULL,
-	[Tel3] [nvarchar](30) NULL,
-	[Tel4] [nvarchar](30) NULL,
-	[DTel1] [nvarchar](20) NULL,
-	[DTel2] [nvarchar](20) NULL,
-	[DTel3] [nvarchar](20) NULL,
-	[DTel4] [nvarchar](20) NULL,
-	[SitoWeb] [nvarchar](50) NULL,
-	[Note] [ntext] NULL,
-	[Flag Saldatura] [bit] NOT NULL,
-	[Flag Informatica] [bit] NOT NULL,
-	[Flag Sicurezza] [bit] NOT NULL,
-	[Flag Qualità] [bit] NOT NULL,
-	[Flag Meccanica] [bit] NOT NULL,
-	[Flag Automazione] [bit] NOT NULL,
-	[Flag Plasturgia] [bit] NOT NULL,
-	[Flag Altro] [bit] NOT NULL,
-	[HashRagioneSociale] [nvarchar](100) NULL,
-	[Valido] [bit] NOT NULL,
-	[Accetta_Promozioni] [bit] NOT NULL,
-	[Fornitore] [bit] NOT NULL,
-	[Mail-Azienda] [nvarchar](80) NULL,
-	[TsAggiornamento] [datetime] NULL,
- CONSTRAINT [PK_Anagrafica Aziende] PRIMARY KEY CLUSTERED
-"""

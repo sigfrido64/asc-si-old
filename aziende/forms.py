@@ -1,5 +1,5 @@
 # coding=utf-8
-from django.forms import Textarea, TextInput
+from django.forms import TextInput
 from .models import Nazione, Azienda
 from mongodbforms import DocumentForm
 

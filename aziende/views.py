@@ -3,7 +3,6 @@ from django.shortcuts import render
 from .models import Nazione, NazioneSQL
 from .models import Azienda, Sede, Contatto
 from .models import Provincia, ProvinciaSQL, AziendaSQL, ContattoSQL
-from .models import AziendaHelper, SedeHelper, ContattoHelper
 from .forms import AziendaForm
 from sigutil import UserPermissions, get_obj_or_404
 from django.http import HttpResponseRedirect, Http404, HttpResponse
@@ -12,69 +11,7 @@ import json
 from django.views.decorators.csrf import csrf_exempt
 from django.contrib.auth.decorators import login_required
 from bson.json_util import dumps
-from sigutil import concatena, valid_email, hashsig
-
-
-# region API Helpers
-def aggiornahelper(azienda_id):
-    """
-    Aggiorna il record correlato nella collection di helper.
-    :param azienda_id: Id dell'azienda di cui ricreo l'helper entry.
-    """
-    # DEBUG print("Id : " + str(azienda_id))
-    # Come prima cosa recupera il record se esiste oppure ne crea uno nuovo.
-    try:
-        aziendah = AziendaHelper.objects.get(id=azienda_id)
-    except AziendaHelper.DoesNotExist:
-        aziendah = AziendaHelper()
-    # Recupera il record dell'azienda per le future referenze. Lo faccio perchè MongoDB non supporta i Join.
-    azienda = Azienda.objects.get(id=azienda_id)
-    # Copia gli elementi relativi all'azienda.
-    aziendah.ragione_sociale = azienda.ragione_sociale
-    aziendah.id = azienda.id
-    aziendah.descrizione = azienda.descrizione
-    aziendah.id_asc_azienda = azienda.id_asc_azienda
-
-    # Ripulisce il record delle sede se esiste.
-    del aziendah.sedi[:]
-
-    # Ora recupera ogni sede.
-    sedi = Sede.objects(azienda=azienda)
-    for sede in sedi:
-        # Copia gli elementi relativi alla sede.
-        sh = SedeHelper()
-        sh.id = sede.id
-        sh.indirizzo = concatena(sede.indirizzo1, " ", sede.indirizzo2, " - ", sede.cap, " ", sede.comune, " (",
-                                 sede.provincia, ")")
-        if sede.nazione:
-            sh.indirizzo = concatena(sh.indirizzo, " - ", sede.nazione)
-
-        # E per ogni sede recupera ogni contatto.
-        contatti = Contatto.objects(azienda=azienda)
-        for conta in contatti:
-            ch = ContattoHelper()
-            ch.contatto = concatena(conta.titolo, " ", conta.cognome, " ", conta.nome)
-            ch.id = conta.pk
-            ch.id_asc_contatto = conta.id_asc_contatto
-            sh.contatti.append(ch)
-
-        aziendah.sedi.append(sh)
-
-    # Salva il tutto.
-    return aziendah.save()
-
-
-@csrf_exempt
-def api_refreshelper(request):
-    print("Refresh helper aziende")
-    cavolo = Azienda.objects()
-    for azienda in cavolo:
-        # DEBUG print(azienda.ragione_sociale)
-        aggiornahelper(azienda.pk)
-
-    mimetype = 'application/json'
-    return HttpResponse("Aggiornamento Terminato !", mimetype)
-# endregion
+from sigutil import valid_email, hashsig
 
 
 @login_required()
@@ -115,7 +52,7 @@ def add_edit(request, pk=None):
     if request.method == 'POST':
         form = AziendaForm(request.POST, instance=azienda)
         if form.is_valid():
-            form.save
+            form.save()
             return HttpResponseRedirect(reverse('aziende:index'))
     else:
         form = AziendaForm(instance=azienda)
@@ -131,8 +68,8 @@ def get_listanazioni(request):
     print("Chiamata AJAX Aziende")
     if request.is_ajax() or True:
         results = []
-        for nazione in Nazione.objects():
-            stringa_json = {}
+        for nazione in Nazione.objects:
+            stringa_json = dict()
             stringa_json['OrderID'] = 1
             stringa_json['CustomerID'] = nazione.nazione
             stringa_json['EmployeeID'] = 'Sigfrido'
@@ -152,70 +89,22 @@ def get_listaziende(request):
     if request.is_ajax() or True:
         results = []
 
-        aziende = AziendaHelper.objects(hash_azienda__contains=filtro).explain()
+        aziende = Azienda.objects(hash__contains=filtro).explain()
         print(aziende)
-        aziende = AziendaHelper.objects(hash_azienda__contains=filtro)[:50]
+        aziende = Azienda.objects(hash__contains=filtro)[:50]
         for azienda in aziende:
-            stringa_json = {}
+            stringa_json = dict()
             stringa_json['pk'] = str(azienda.pk)
             stringa_json['ragione_sociale'] = azienda.ragione_sociale
-            stringa_json['sedi'] = azienda.sedi_html
-            stringa_json['contatti'] = azienda.contatti_html
+            stringa_json['sedi'] = azienda.lista_sedi_html
+            stringa_json['contatti'] = azienda.lista_contatti_html
             results.append(stringa_json)
-
 
         data = dumps(results)
     else:
         data = 'fail'
     mimetype = 'application/json'
     return HttpResponse(data, mimetype)
-
-
-@csrf_exempt
-def popola(request):
-    azienda1 = Azienda()
-    azienda1.ragione_sociale = "Ciccio e Pluto"
-    azienda1.cf = "1234"
-    azienda1.note = "Nessuna"
-
-    sede1 = Sede()
-    sede1.indirizzo1 = "via posalaquaglia 1"
-    sede1.cap = "10100"
-    sede1.comune = "torino"
-
-    azienda1.sedi.append(sede1)
-
-    sede2 = Sede()
-    sede2.indirizzo1 = "via merdacane 1"
-    sede2.cap = "10101"
-    sede2.comune = "Cinisello"
-
-    azienda1.sedi.append(sede2)
-
-    azienda1.save()  # Prima azienda
-
-    azienda = Azienda()
-    azienda.ragione_sociale = "Pluto e Paperino"
-    azienda.cf = "12345"
-    azienda.note = "Nessuna"
-
-    sede1 = Sede()
-    sede1.indirizzo1 = "via della polverirei 1"
-    sede1.cap = "10100"
-    sede1.comune = "torino"
-
-    azienda.sedi.append(sede1)
-
-    sede2 = Sede()
-    sede2.indirizzo1 = "via cazzo e culo 1"
-    sede2.cap = "10101"
-    sede2.comune = "Cinisello"
-
-    azienda.sedi.append(sede2)
-
-    azienda.save()  # Seconda Azienda.
-
-    return HttpResponseRedirect(reverse('aziende:index'))
 # endregion
 
 
@@ -231,6 +120,7 @@ def importanazioni(request):
     # the database at a time, saving memory.
     for star in star_set.iterator():
         print(star.name)
+        :param request:
     """
     for nazione_sql in NazioneSQL.objects.all():
         nazione = Nazione()
@@ -245,6 +135,7 @@ def importaprovincie(request):
     """
     Importa la lista delle provincie partendo da un database SQlite3 con il modello impostato in models
     nel database mongo !
+    :param request:
     """
     for provincia_sql in ProvinciaSQL.objects.all():
         provincia = Provincia()
@@ -260,9 +151,9 @@ def importaaziende(request):
     """
     Importa la lista delle aziende e delle sedi delle stesse partendo da un database SQlite3 con il modello
     impostato in models nel database mongo !
+    :param request:
     """
     for azienda_sql in AziendaSQL.objects.all():
-        print("Importazione azienda : " + str(azienda_sql.id_azienda))
         # Importa i dati dell'azienda.
         azienda = Azienda()
         azienda.id_asc_azienda = azienda_sql.id_azienda
@@ -296,9 +187,13 @@ def importaaziende(request):
         sede.promozione_ok = (True if azienda_sql.accetta_promozioni else False)
 
         # Crea il link all'azienda correlata.
+        # Occhio che se non faccio così lui crea una nuova istanza dell'azienda !!!
         sede.azienda = Azienda.objects.get(id_asc_azienda=azienda_sql.id_azienda)
         # Salva la sede.
         sede.save()
+
+        # Aggiorna le correlazioni tra azienda e sedi.
+        azienda.aggiornacorrelazioni()
 
     data = json.dumps("Aziende e Sedi Importate !")
     # Visualizza la risposta.
@@ -309,9 +204,9 @@ def importacontatti(request):
     """
     Importa la lista dei contatti delle aziende partendo da un database SQlite3 con il modello impostato in models
     nel database mongo !
+    :param request:
     """
     for contatto_sql in ContattoSQL.objects.all():
-        print("Importo contatto : " + str(contatto_sql.id_contatto))
         # Importa i dati del contatto.
         contatto = Contatto()
         contatto.id_asc_contatto = contatto_sql.id_contatto
@@ -328,6 +223,8 @@ def importacontatti(request):
         contatto.doctel2 = contatto_sql.dtel2
         contatto.doctel3 = contatto_sql.dtel3
         contatto.doctel4 = contatto_sql.dtel4
+        contatto.data_nascita = contatto_sql.data_nascita
+        contatto.note = contatto_sql.note
         # Se le due email ci sono e sono valide le importa.
         if contatto_sql.email1:
             dummy = contatto_sql.email1.strip()
@@ -339,13 +236,19 @@ def importacontatti(request):
                 contatto.email2 = dummy
         contatto.note = contatto_sql.note
 
-        # Crea il link all'azienda cui si riferisce.
-        print("Cerco Azienda con ID : ", contatto_sql.id_azienda)
-        # Come prima cosa recupera il record se esiste oppure ne crea uno nuovo.
+        # Crea il link all'azienda ed alla sede cui si riferisce.
+        # Come prima cosa recupera il record se esiste. Se non lo trovo è perchè si tratta di un errore del
+        # vecchio DB, quindi ignoro. Mi basta l'errore sull'azienda perchè nel vecchio DB la tabella era unica.
         try:
             azienda = Azienda.objects.get(id_asc_azienda=contatto_sql.id_azienda)
             contatto.azienda = azienda
+            sede = Sede.objects.get(id_asc_azienda=contatto_sql.id_azienda)
+            contatto.sede = sede
+
             contatto.save()
+            # Aggiorno le correlazioni dell'azienda.
+            azienda.aggiornacorrelazioni()
+
         except Azienda.DoesNotExist:
             pass
 

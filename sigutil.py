@@ -81,7 +81,7 @@ def valid_email(email):
 
 
 def hashsig(linea):
-    return re.sub('[^0-9a-zA-Z]+', '', linea)
+    return re.sub('[^0-9a-zA-Z]+', '', linea).upper()
 
 
 """
